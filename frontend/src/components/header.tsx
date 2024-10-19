@@ -16,19 +16,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn, truncateAddress } from "@/lib/utils";
-import type { GetNamesForAddressReturnType } from "@ensdomains/ensjs/subgraph";
-import { AvatarImage } from "@radix-ui/react-avatar";
 import { ConnectKitButton } from "connectkit";
 import { User } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useAccount, useEnsName } from "wagmi";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
-import { useEnsAvatar } from "wagmi";
-import { normalize } from "viem/ens";
-import { useEnsNames } from "@/hooks/useEnsNames";
+import { useEnsStore } from "@/states/useEnsStore";
 
 const LINKS = [
   {
@@ -82,29 +77,22 @@ const Navigation = () => {
 
 export default function Header() {
   const { isConnected, address, chainId } = useAccount();
-
-  const [open, setOpen] = useState(false);
-  const { data: primaryEns } = useEnsName({
-    address,
-    chainId,
-  });
-
-  const ensNames = useEnsNames(address, chainId);
-
-  const [selectedEns, setSelectedEns] = useState<
-    GetNamesForAddressReturnType[0] | undefined
-  >(ensNames?.find((ens) => ens.name === primaryEns));
-
-  const { data: avatar } = useEnsAvatar({
-    name: normalize(selectedEns?.name || ""),
-    chainId,
-  });
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const {
+    ensNames,
+    selectedEns,
+    avatar,
+    setAddress,
+    setSelectedEns,
+    fetchEnsNames,
+  } = useEnsStore();
 
   useEffect(() => {
-    if (ensNames && primaryEns && !selectedEns) {
-      setSelectedEns(ensNames.find((ens) => ens.name === primaryEns));
+    if (isConnected && address && chainId) {
+      setAddress(address, chainId);
+      fetchEnsNames();
     }
-  }, [ensNames, primaryEns, selectedEns]);
+  }, [isConnected, address, chainId, setAddress, fetchEnsNames]);
 
   return (
     <header className="bg-background border-b">
@@ -112,7 +100,7 @@ export default function Header() {
         <Navigation />
         <div className="flex items-center space-x-4">
           {isConnected ? (
-            <Popover open={open} onOpenChange={setOpen}>
+            <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
@@ -126,7 +114,7 @@ export default function Header() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid px-2">
-                      <div className="font-medium"> {selectedEns?.name}</div>
+                      <div className="font-medium">{selectedEns?.name}</div>
                       <div className="text-xs text-muted-foreground">
                         {truncateAddress(address)}
                       </div>
@@ -145,7 +133,7 @@ export default function Header() {
                           key={ens.id}
                           onSelect={() => {
                             setSelectedEns(ens);
-                            setOpen(false);
+                            setPopoverOpen(false);
                           }}
                         >
                           <User className="mr-2 h-4 w-4" />
