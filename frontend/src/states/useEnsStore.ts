@@ -1,10 +1,10 @@
-import { create } from "zustand";
+import { config } from "@/lib/wagmi";
+import type { ClientWithEns } from "@ensdomains/ensjs/contracts";
 import type { GetNamesForAddressReturnType } from "@ensdomains/ensjs/subgraph";
 import { getNamesForAddress } from "@ensdomains/ensjs/subgraph";
-import type { ClientWithEns } from "@ensdomains/ensjs/contracts";
-import { normalize } from "viem/ens";
-import { config } from "@/lib/wagmi";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
+import { normalize } from "viem/ens";
+import { create } from "zustand";
 
 interface EnsState {
   address: string | null;
