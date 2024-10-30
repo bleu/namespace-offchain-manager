@@ -10,7 +10,6 @@ export const config = createConfig(
     transports: {
       [mainnet.id]: http(),
       [sepolia.id]: http(),
-
     },
     walletConnectProjectId: "ABXC",
   }),
