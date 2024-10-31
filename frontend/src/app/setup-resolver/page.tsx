@@ -1,34 +1,49 @@
 "use client";
-import React from "react";
+
+import type React from "react";
+import { useEffect } from "react";
 import SetupResolver from "./(components)/SetupResolver";
+import { useEnsResolverSetup } from "./(hooks)/useResolverSetup";
 
 const Page = () => {
-  const [resolver, setResolver] = React.useState(
-    "0x1234567891234567891234567891234567891234567",
-  );
-  const [error, setError] = React.useState("");
+  const {
+    error,
+    setError,
+    currentResolver,
+    isPageLoading,
+    isPending,
+    isSuccess,
+    isError,
+    writeError,
+    setupComplete,
+    handleSubmit,
+    refetchResolver,
+    selectedEns,
+  } = useEnsResolverSetup();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Basic validation for hex address format
-    if (!/^0x[0-9a-fA-F]+$/.test(resolver)) {
-      setError(
-        "Invalid resolver address format. Must start with 0x and contain only hexadecimal characters.",
-      );
-      return;
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("Transaction successful: Resolver updated");
+      refetchResolver();
     }
 
-    setError("");
-    console.log("Submitted resolver:", resolver);
-  };
+    if (isError) {
+      console.error("Transaction error:", writeError);
+      setError(
+        writeError instanceof Error ? writeError.message : "Transaction failed",
+      );
+    }
+  }, [isSuccess, isError, writeError, refetchResolver, setError]);
 
   return (
     <SetupResolver
-      resolver={resolver}
       error={error}
-      setResolver={setResolver}
       handleSubmit={handleSubmit}
+      isLoading={isPageLoading}
+      isWriteContractLoading={isPending}
+      selectedEns={selectedEns}
+      currentResolver={currentResolver as string | null}
+      setupComplete={setupComplete}
     />
   );
 };

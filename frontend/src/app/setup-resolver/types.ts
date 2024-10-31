@@ -1,6 +1,14 @@
+import type { GetNamesForAddressReturnType } from "@ensdomains/ensjs/subgraph";
+
+type NameWithRelation = GetNamesForAddressReturnType[0];
+
 export interface SetupResolverProps {
-  resolver: string;
-  setResolver: (value: string) => void;
   error: string;
-  handleSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  handleSubmit: (event: React.FormEvent) => void;
+  isLoading: boolean;
+  isWriteContractLoading: boolean;
+  selectedEns: NameWithRelation | undefined;
+  currentResolver: string | null;
+  setupComplete: boolean;
+  onEnsSelect?: (ensName: string) => void;
 }
