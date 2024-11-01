@@ -11,4 +11,5 @@ export interface SetupResolverProps {
   currentResolver: string | null;
   setupComplete: boolean;
   onEnsSelect?: (ensName: string) => void;
+  chainId: number
 }

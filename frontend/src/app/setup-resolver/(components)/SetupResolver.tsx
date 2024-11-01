@@ -11,6 +11,7 @@ import type { SetupResolverProps } from "../types";
 const SetupResolver: React.FC<SetupResolverProps> = ({
   error,
   handleSubmit,
+  chainId,
   isLoading,
   selectedEns,
   currentResolver,
@@ -66,7 +67,7 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
           <div className="space-y-4">
             <CopyableField
               label="Namespace Offchain Resolver"
-              value={NAMESPACE_RESOLVER_ADDRESS}
+              value={NAMESPACE_RESOLVER_ADDRESS[chainId]}
               className="text-sm"
             />
 

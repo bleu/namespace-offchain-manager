@@ -1,8 +1,6 @@
 import { ENS_REGISTRY_ABI } from "@/constants/abi";
-import {
-  ENS_REGISTRY_ADDRESS,
-  NAMESPACE_RESOLVER_ADDRESS,
-} from "@/constants/constants";
+import { ENS_REGISTRY_ADDRESS, NAMESPACE_RESOLVER_ADDRESS } from "@/constants/constants";
+
 import { useEnsStore } from "@/states/useEnsStore";
 import { useMemo, useState } from "react";
 import { namehash } from "viem/ens";
@@ -14,11 +12,11 @@ import {
 } from "wagmi";
 
 export const useEnsResolverSetup = () => {
+  const chainId = useChainId();
+
   const { isConnecting } = useAccount();
   const { selectedEns } = useEnsStore();
-  const chainId = useChainId();
   const [error, setError] = useState("");
-
   const {
     data: currentResolver,
     refetch: refetchResolver,
@@ -34,22 +32,25 @@ export const useEnsResolverSetup = () => {
     isError,
     error: writeError,
   } = useWriteContract();
+  
+
 
   const isPageLoading = useMemo(() => {
     return isCurrentResolverLoading || isConnecting || !selectedEns;
   }, [isCurrentResolverLoading, isConnecting, selectedEns]);
 
+
   const setupComplete = useMemo(() => {
     if (!currentResolver) return false;
     try {
-      return currentResolver === NAMESPACE_RESOLVER_ADDRESS;
+      return currentResolver === NAMESPACE_RESOLVER_ADDRESS[chainId];
     } catch (error) {
       console.error("Error comparing addresses:", error);
       return false;
     }
-  }, [currentResolver]);
+  }, [currentResolver, chainId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (chainId !== 11155111) {
       setError("Please connect to Sepolia testnet");
@@ -62,13 +63,12 @@ export const useEnsResolverSetup = () => {
 
     setError("");
     const node = namehash(selectedEns.name);
-
     try {
-      await writeContract({
-        address: ENS_REGISTRY_ADDRESS,
+      writeContract({
+        address: ENS_REGISTRY_ADDRESS[chainId] as `0x${string}`,
         abi: ENS_REGISTRY_ABI,
         functionName: "setResolver",
-        args: [node, NAMESPACE_RESOLVER_ADDRESS as `0x${string}`],
+        args: [node, NAMESPACE_RESOLVER_ADDRESS[chainId]],
       });
     } catch (error) {
       console.error("Error setting resolver:", error);
@@ -80,6 +80,7 @@ export const useEnsResolverSetup = () => {
 
   return {
     error,
+    chainId,
     selectedEns,
     setError,
     currentResolver,

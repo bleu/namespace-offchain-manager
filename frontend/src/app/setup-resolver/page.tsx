@@ -9,6 +9,7 @@ const Page = () => {
   const {
     error,
     setError,
+    chainId,
     currentResolver,
     isPageLoading,
     isPending,
@@ -38,6 +39,7 @@ const Page = () => {
   return (
     <SetupResolver
       error={error}
+      chainId={chainId}
       handleSubmit={handleSubmit}
       isLoading={isPageLoading}
       isWriteContractLoading={isPending}
