@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -16,14 +17,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn, truncateAddress } from "@/lib/utils";
+import { useEnsStore } from "@/states/useEnsStore";
 import { ConnectKitButton } from "connectkit";
 import { User } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { usePathname } from "next/navigation";
-import { useEnsStore } from "@/states/useEnsStore";
 
 const LINKS = [
   {
