@@ -1,4 +1,4 @@
-import { mainnet, sepolia, goerli } from "wagmi/chains";
+import { goerli, mainnet, sepolia } from "wagmi/chains";
 
 export const NAMESPACE_RESOLVER_ADDRESS: { [key: number]: string } = {
   [mainnet.id]: "0xF12d6Aa997F7c9Fc2E8968A19623211e8C8C1bF4",

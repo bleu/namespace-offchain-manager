@@ -4,7 +4,7 @@ import {
   NAMESPACE_RESOLVER_ADDRESS,
 } from "@/constants/constants";
 import { useEnsStore } from "@/states/useEnsStore";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { namehash } from "viem/ens";
 import {
   useAccount,
@@ -28,7 +28,7 @@ export const useEnsResolverSetup = () => {
     name: selectedEns?.name || undefined,
   });
 
-  const { data: hash, writeContract, isPending, isError } = useWriteContract();
+  const { data: hash, writeContract, isPending, isError, reset } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -71,6 +71,14 @@ export const useEnsResolverSetup = () => {
       );
     }
   };
+
+  useEffect(() => {
+    // Reset form when selectedEns changes
+    if (selectedEns?.name) {
+      setError("");
+      reset();
+    }
+  }, [selectedEns, reset]);
 
   return {
     chainId,

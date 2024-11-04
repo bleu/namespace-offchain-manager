@@ -21,6 +21,7 @@ export const TransactionDialog = ({
   isConfirmed,
   isTransactionPending,
   transactionHash,
+  ensName,
 }: TransactionDialogProps) => {
   const getContent = () => {
     if (isConfirmed) {
@@ -90,6 +91,11 @@ export const TransactionDialog = ({
           <DialogTitle>Confirm Resolver Update</DialogTitle>
         </DialogHeader>
         <div className="py-6 space-y-4">
+          <CopyableField
+            label="Ens Name"
+            value={ensName || ""}
+            className="text-xs"
+          />
           <CopyableField
             label="Current Resolver"
             value={currentResolver || ""}

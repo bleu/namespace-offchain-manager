@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SetupResolver from "./(components)/SetupResolver";
 import { useEnsResolverSetup } from "./(hooks)/useResolverSetup";
 
@@ -37,6 +37,12 @@ const Page = () => {
   const handleConfirmUpdate = () => {
     handleSubmit();
   };
+
+  useEffect(() => {
+    // Close dialog when selectedEns changes
+    setIsDialogOpen(false);
+  }, [selectedEns]);
+
 
   return (
     <SetupResolver

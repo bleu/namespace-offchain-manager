@@ -29,4 +29,5 @@ export interface TransactionDialogProps {
   isConfirmed: boolean;
   transactionHash?: string;
   isTransactionPending: boolean;
+  ensName: string | undefined;
 }

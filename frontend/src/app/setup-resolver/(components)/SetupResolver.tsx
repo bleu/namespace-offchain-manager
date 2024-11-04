@@ -31,12 +31,12 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
       <div className="w-full max-w-3xl mx-auto space-y-6">
         <Card className="p-6 border bg-card">
           <div className="flex justify-between items-start mb-6">
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1">
               <h3 className="text-lg font-semibold text-card-foreground">
                 Setup resolver
               </h3>
               <p className="text-sm text-muted-foreground">
-                Current ENS Configuration
+                In order to enable offchain subname resolution, you need to update  ENS registry to ensure success.
               </p>
             </div>
             <StatusBadge
@@ -118,6 +118,7 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
         isConfirmed={isConfirmed}
         transactionHash={transactionHash}
         isTransactionPending={isTransactionPending}
+        ensName={selectedEns?.name ?? undefined}
       />
     </>
   );
