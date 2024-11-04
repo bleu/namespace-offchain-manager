@@ -4,12 +4,29 @@ type NameWithRelation = GetNamesForAddressReturnType[0];
 
 export interface SetupResolverProps {
   error: string;
-  handleSubmit: (event: React.FormEvent) => void;
   isLoading: boolean;
-  isWriteContractLoading: boolean;
   selectedEns: NameWithRelation | undefined;
   currentResolver: string | null;
   setupComplete: boolean;
-  onEnsSelect?: (ensName: string) => void;
-  chainId: number
+  chainId: number;
+  isConfirming: boolean;
+  isConfirmed: boolean;
+  transactionHash?: string;
+  isTransactionPending: boolean;
+  isDialogOpen: boolean;
+  handleOpenDialog: () => void;
+  handleCloseDialog: () => void;
+  handleConfirmUpdate: () => void;
+}
+
+export interface TransactionDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  currentResolver: string | null;
+  chainId: number;
+  isConfirming: boolean;
+  isConfirmed: boolean;
+  transactionHash?: string;
+  isTransactionPending: boolean;
 }

@@ -1,7 +1,7 @@
 import { addEnsContracts } from "@ensdomains/ensjs";
 import { getDefaultConfig } from "connectkit";
 import { http, createConfig } from "wagmi";
-import { mainnet, sepolia, goerli } from "wagmi/chains";
+import { goerli, mainnet, sepolia } from "wagmi/chains";
 
 export const config = createConfig(
   getDefaultConfig({
@@ -9,7 +9,7 @@ export const config = createConfig(
     chains: [addEnsContracts(mainnet), addEnsContracts(sepolia)],
     transports: {
       [mainnet.id]: http(),
-      [sepolia.id]: http(),
+      [sepolia.id]: http("https://rpc.ankr.com/eth_sepolia"),
       [goerli.id]: http(),
     },
     walletConnectProjectId: "ABXC",

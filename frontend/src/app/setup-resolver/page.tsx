@@ -1,51 +1,59 @@
 "use client";
 
-import type React from "react";
-import { useEffect } from "react";
+import { useState } from "react";
 import SetupResolver from "./(components)/SetupResolver";
 import { useEnsResolverSetup } from "./(hooks)/useResolverSetup";
 
 const Page = () => {
   const {
     error,
-    setError,
     chainId,
     currentResolver,
     isPageLoading,
     isPending,
-    isSuccess,
-    isError,
-    writeError,
     setupComplete,
     handleSubmit,
-    refetchResolver,
     selectedEns,
+    isConfirming,
+    isConfirmed,
+    refetchResolver,
+    transactionHash,
   } = useEnsResolverSetup();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  useEffect(() => {
-    if (isSuccess) {
-      console.log("Transaction successful: Resolver updated");
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    if (isConfirmed) {
+      setIsDialogOpen(false);
       refetchResolver();
+    } else if (!isConfirming) {
+      setIsDialogOpen(false);
     }
+  };
 
-    if (isError) {
-      console.error("Transaction error:", writeError);
-      setError(
-        writeError instanceof Error ? writeError.message : "Transaction failed",
-      );
-    }
-  }, [isSuccess, isError, writeError, refetchResolver, setError]);
+  const handleConfirmUpdate = () => {
+    handleSubmit();
+  };
 
   return (
     <SetupResolver
       error={error}
       chainId={chainId}
-      handleSubmit={handleSubmit}
+      isConfirming={isConfirming}
+      isConfirmed={isConfirmed}
       isLoading={isPageLoading}
-      isWriteContractLoading={isPending}
+      isTransactionPending={isPending}
       selectedEns={selectedEns}
       currentResolver={currentResolver as string | null}
       setupComplete={setupComplete}
+      isDialogOpen={isDialogOpen}
+      handleOpenDialog={handleOpenDialog}
+      handleCloseDialog={handleCloseDialog}
+      handleConfirmUpdate={handleConfirmUpdate}
+      transactionHash={transactionHash}
     />
   );
 };

@@ -1,6 +1,8 @@
 import { ENS_REGISTRY_ABI } from "@/constants/abi";
-import { ENS_REGISTRY_ADDRESS, NAMESPACE_RESOLVER_ADDRESS } from "@/constants/constants";
-
+import {
+  ENS_REGISTRY_ADDRESS,
+  NAMESPACE_RESOLVER_ADDRESS,
+} from "@/constants/constants";
 import { useEnsStore } from "@/states/useEnsStore";
 import { useMemo, useState } from "react";
 import { namehash } from "viem/ens";
@@ -8,15 +10,16 @@ import {
   useAccount,
   useChainId,
   useEnsResolver,
+  useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 
 export const useEnsResolverSetup = () => {
   const chainId = useChainId();
-
   const { isConnecting } = useAccount();
   const { selectedEns } = useEnsStore();
   const [error, setError] = useState("");
+
   const {
     data: currentResolver,
     refetch: refetchResolver,
@@ -25,20 +28,16 @@ export const useEnsResolverSetup = () => {
     name: selectedEns?.name || undefined,
   });
 
-  const {
-    writeContract,
-    isPending,
-    isSuccess,
-    isError,
-    error: writeError,
-  } = useWriteContract();
-  
+  const { data: hash, writeContract, isPending, isError } = useWriteContract();
 
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   const isPageLoading = useMemo(() => {
     return isCurrentResolverLoading || isConnecting || !selectedEns;
   }, [isCurrentResolverLoading, isConnecting, selectedEns]);
-
 
   const setupComplete = useMemo(() => {
     if (!currentResolver) return false;
@@ -50,12 +49,7 @@ export const useEnsResolverSetup = () => {
     }
   }, [currentResolver, chainId]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (chainId !== 11155111) {
-      setError("Please connect to Sepolia testnet");
-      return;
-    }
+  const handleSubmit = () => {
     if (!selectedEns?.name || !currentResolver) {
       setError("Please select an ENS name");
       return;
@@ -79,17 +73,18 @@ export const useEnsResolverSetup = () => {
   };
 
   return {
-    error,
     chainId,
+    error,
     selectedEns,
-    setError,
     currentResolver,
     isPageLoading,
     isPending,
-    isSuccess,
     isError,
-    writeError,
+    isConfirming,
+    isConfirmed,
     setupComplete,
+    transactionHash: hash,
+    setError,
     handleSubmit,
     refetchResolver,
   };
