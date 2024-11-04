@@ -28,7 +28,7 @@ export const CopyableField = ({
         <div className="flex-col flex-1">
           <div
             className={cn(
-              { className },
+              className,
               "bg-muted p-3 rounded-lg font-mono text-sm break-all",
             )}
           >

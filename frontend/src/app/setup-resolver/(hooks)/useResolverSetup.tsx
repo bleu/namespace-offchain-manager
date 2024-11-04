@@ -13,6 +13,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
+import { goerli, mainnet, sepolia } from "wagmi/chains";
 
 export const useEnsResolverSetup = () => {
   const chainId = useChainId();
@@ -61,7 +62,17 @@ export const useEnsResolverSetup = () => {
       return;
     }
 
-    setError("");
+    if (
+      chainId !== mainnet.id &&
+      chainId !== goerli.id &&
+      chainId !== sepolia.id
+    ) {
+      setError(
+        "Unsupported chain, please connected to mainnet, goerli or sepolia",
+      );
+      return;
+    }
+
     const node = namehash(selectedEns.name);
     try {
       writeContract({
