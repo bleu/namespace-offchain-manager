@@ -28,7 +28,13 @@ export const useEnsResolverSetup = () => {
     name: selectedEns?.name || undefined,
   });
 
-  const { data: hash, writeContract, isPending, isError, reset } = useWriteContract();
+  const {
+    data: hash,
+    writeContract,
+    isPending,
+    isError,
+    reset,
+  } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({

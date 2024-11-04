@@ -9,10 +9,10 @@ export const config = createConfig(
     chains: [addEnsContracts(mainnet), addEnsContracts(sepolia)],
     transports: {
       [mainnet.id]: http(),
-      [sepolia.id]: fallback([ 
-        http('https://rpc.ankr.com/eth_sepolia'), 
-        http('https://eth-sepolia.public.blastapi.io'), 
-      ]), 
+      [sepolia.id]: fallback([
+        http("https://rpc.ankr.com/eth_sepolia"),
+        http("https://eth-sepolia.public.blastapi.io"),
+      ]),
       [goerli.id]: http(),
     },
     walletConnectProjectId: "ABXC",

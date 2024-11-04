@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -26,7 +27,10 @@ export const CopyableField = ({
       <div className="flex items-center">
         <div className="flex-col flex-1">
           <div
-            className={`bg-muted p-3 rounded-lg font-mono text-sm break-all ${className}`}
+            className={cn(
+              { className },
+              "bg-muted p-3 rounded-lg font-mono text-sm break-all",
+            )}
           >
             {value}
           </div>

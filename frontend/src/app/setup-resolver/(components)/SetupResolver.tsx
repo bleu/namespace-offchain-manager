@@ -36,7 +36,8 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
                 Setup resolver
               </h3>
               <p className="text-sm text-muted-foreground">
-                In order to enable offchain subname resolution, you need to update  ENS registry to ensure success.
+                In order to enable offchain subname resolution, you need to
+                update ENS registry to ensure success.
               </p>
             </div>
             <StatusBadge
