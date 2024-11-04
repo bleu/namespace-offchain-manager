@@ -1,21 +1,32 @@
-interface StatusBadgeProps {
-  type: "warning" | "success";
+import { cva, type VariantProps } from "class-variance-authority";
+
+const statusBadgeVariants = cva(
+  "flex items-center text-sm px-3 py-1 rounded-full",
+  {
+    variants: {
+      type: {
+        warning: "text-warning bg-warning/10",
+        success: "text-success bg-success/10",
+      },
+    },
+    defaultVariants: {
+      type: "warning",
+    },
+  }
+)
+
+interface StatusBadgeProps extends VariantProps<typeof statusBadgeVariants> {
   text: string;
   icon: React.ReactNode;
 }
 
 export const StatusBadge = ({ type, text, icon }: StatusBadgeProps) => {
-  const styles = {
-    warning: "text-warning bg-warning/10",
-    success: "text-success bg-success/10",
-  };
-
   return (
-    <div
-      className={`flex items-center text-sm px-3 py-1 rounded-full ${styles[type]}`}
-    >
+    <div className={statusBadgeVariants({ type })}>
       {icon}
       <span className="ml-1">{text}</span>
     </div>
   );
 };
+
+export default StatusBadge;
