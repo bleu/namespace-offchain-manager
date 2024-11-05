@@ -1,34 +1,65 @@
 "use client";
-import React from "react";
+
+import { useEffect, useState } from "react";
 import SetupResolver from "./(components)/SetupResolver";
+import { useEnsResolverSetup } from "./(hooks)/useResolverSetup";
 
 const Page = () => {
-  const [resolver, setResolver] = React.useState(
-    "0x1234567891234567891234567891234567891234567",
-  );
-  const [error, setError] = React.useState("");
+  const {
+    error,
+    chainId,
+    currentResolver,
+    isPageLoading,
+    isPending,
+    setupComplete,
+    handleSubmit,
+    selectedEns,
+    isConfirming,
+    isConfirmed,
+    refetchResolver,
+    transactionHash,
+  } = useEnsResolverSetup();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    // Basic validation for hex address format
-    if (!/^0x[0-9a-fA-F]+$/.test(resolver)) {
-      setError(
-        "Invalid resolver address format. Must start with 0x and contain only hexadecimal characters.",
-      );
-      return;
-    }
-
-    setError("");
-    console.log("Submitted resolver:", resolver);
+  const handleOpenDialog = () => {
+    setIsDialogOpen(true);
   };
+
+  const handleCloseDialog = () => {
+    if (isConfirmed) {
+      setIsDialogOpen(false);
+      refetchResolver();
+    } else if (!isConfirming) {
+      setIsDialogOpen(false);
+    }
+  };
+
+  const handleConfirmUpdate = () => {
+    handleSubmit();
+  };
+
+  useEffect(() => {
+    // Close dialog when selectedEns changes
+    setIsDialogOpen(false);
+  }, [selectedEns]);
+
 
   return (
     <SetupResolver
-      resolver={resolver}
       error={error}
-      setResolver={setResolver}
-      handleSubmit={handleSubmit}
+      chainId={chainId}
+      isConfirming={isConfirming}
+      isConfirmed={isConfirmed}
+      isLoading={isPageLoading}
+      isTransactionPending={isPending}
+      selectedEns={selectedEns}
+      currentResolver={currentResolver as string | null}
+      setupComplete={setupComplete}
+      isDialogOpen={isDialogOpen}
+      handleOpenDialog={handleOpenDialog}
+      handleCloseDialog={handleCloseDialog}
+      handleConfirmUpdate={handleConfirmUpdate}
+      transactionHash={transactionHash}
     />
   );
 };

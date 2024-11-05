@@ -1,7 +1,7 @@
 import { addEnsContracts } from "@ensdomains/ensjs";
 import { getDefaultConfig } from "connectkit";
-import { http, createConfig } from "wagmi";
-import { mainnet, sepolia } from "wagmi/chains";
+import { http, createConfig, fallback } from "wagmi";
+import { goerli, mainnet, sepolia } from "wagmi/chains";
 
 export const config = createConfig(
   getDefaultConfig({
@@ -9,7 +9,11 @@ export const config = createConfig(
     chains: [addEnsContracts(mainnet), addEnsContracts(sepolia)],
     transports: {
       [mainnet.id]: http(),
-      [sepolia.id]: http(),
+      [sepolia.id]: fallback([
+        http("https://rpc.ankr.com/eth_sepolia"),
+        http("https://eth-sepolia.public.blastapi.io"),
+      ]),
+      [goerli.id]: http(),
     },
     walletConnectProjectId: "ABXC",
   }),
