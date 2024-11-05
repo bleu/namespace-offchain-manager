@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SubscriptionPack {
+  id           String    @id @default(cuid())
+  name         String
+  price        Decimal   @db.Decimal(10, 2)
+  duration     Int       // Duration in days
+  maxSubnames  Int       // Maximum number of subnames allowed in this pack
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  subnames     Subname[]
+
+  @@map("subscription_packs")
+}
+
+model Subname {
+  id                String           @id @default(cuid())
+  parentName        String          // e.g., "example.eth"
+  label            String          // e.g., "mysubnamelabel"
+  name             String          // e.g., "mysubnamelabel.example.eth"
+  contenthash      String?         // Optional contenthash
+  
+  // Relations
+  subscriptionPack SubscriptionPack @relation(fields: [subscriptionPackId], references: [id])
+  subscriptionPackId String
+  texts            SubnameText[]
+  addresses        SubnameAddress[]
+  
+  // Timestamps
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  @@unique([parentName, label])
+  @@index([name])
+  @@map("subnames")
+}
+
+model SubnameText {
+  id        String   @id @default(cuid())
+  key       String   // e.g., "avatar"
+  value     String   // e.g., "https://my-avatar-url"
+  
+  // Relations
+  subname   Subname  @relation(fields: [subnameId], references: [id])
+  subnameId String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([subnameId, key])
+  @@map("subname_texts")
+}
+
+model SubnameAddress {
+  id        String   @id @default(cuid())
+  coin      Int      // e.g., 60 for ETH
+  value     String   // The address value
+  
+  // Relations
+  subname   Subname  @relation(fields: [subnameId], references: [id])
+  subnameId String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([subnameId, coin])
+  @@map("subname_addresses")
+}
