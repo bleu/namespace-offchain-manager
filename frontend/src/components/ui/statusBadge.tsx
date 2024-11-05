@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 
 const statusBadgeVariants = cva(
   "flex items-center text-sm px-3 py-1 rounded-full",
@@ -12,8 +12,8 @@ const statusBadgeVariants = cva(
     defaultVariants: {
       type: "warning",
     },
-  }
-)
+  },
+);
 
 interface StatusBadgeProps extends VariantProps<typeof statusBadgeVariants> {
   text: string;

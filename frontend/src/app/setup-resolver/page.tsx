@@ -43,7 +43,6 @@ const Page = () => {
     setIsDialogOpen(false);
   }, [selectedEns]);
 
-
   return (
     <SetupResolver
       error={error}
