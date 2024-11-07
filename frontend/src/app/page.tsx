@@ -34,12 +34,6 @@ export default function Home() {
 
   if (isLoading) return <Loading />;
 
-  if (error) {
-    return (
-      <Card className="p-4 bg-destructive/10 text-destructive">{error}</Card>
-    );
-  }
-
   return (
     <div className="container mx-auto py-6">
       <Card>

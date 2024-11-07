@@ -1,88 +1,107 @@
-import type { SubnameResponseDTO } from "@/types/subname.types";
+import { useToast } from "@/components/ui/hooks/use-toast";
+import { subnameClient } from "@/services/subname-client";
+import type {
+  CreateSubnameDTO,
+  SubnameResponseDTO,
+  UpdateSubnameDTO,
+} from "@/types/subname.types";
+import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
 export const useSubnames = () => {
   const [subnames, setSubnames] = useState<SubnameResponseDTO[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const { toast } = useToast();
+
+  const getErrorMessage = (error: unknown): string => {
+    if (axios.isAxiosError(error)) {
+      return error.response?.data?.error || "An unexpected error occurred";
+    }
+    return error instanceof Error
+      ? error.message
+      : "An unexpected error occurred";
+  };
 
   const fetchSubnames = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("/api/subnames");
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch subnames");
-      }
-
+      const data = await subnameClient.getAll();
       setSubnames(data);
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
+      setError(null);
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      setError(errorMessage);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [toast]);
 
-  const createSubname = async (data: any) => {
+  const createSubname = async (data: CreateSubnameDTO) => {
     try {
       setIsCreating(true);
-      const response = await fetch("/api/subnames/new", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to create subname");
-      }
-
+      const result = await subnameClient.create(data);
       await fetchSubnames();
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      throw error;
+      toast({
+        title: "Success",
+        description: `Subname ${data.label}.${data.parentName} created successfully`,
+      });
+      return result;
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+      throw err;
     } finally {
       setIsCreating(false);
     }
   };
 
-  const deleteSubname = async (id: string) => {
+  const updateSubname = async (id: string, data: UpdateSubnameDTO) => {
     try {
-      const response = await fetch(`/api/subnames/${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to delete subname");
-      }
-
+      const result = await subnameClient.update(id, data);
       await fetchSubnames();
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      throw error;
+      toast({
+        title: "Success",
+        description: "Subname updated successfully",
+      });
+      return result;
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+      throw err;
     }
   };
 
-  const updateSubname = async (id: string, data: any) => {
+  const deleteSubname = async (id: string) => {
     try {
-      const response = await fetch(`/api/subnames/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update subname");
-      }
-
+      await subnameClient.delete(id);
       await fetchSubnames();
-    } catch (error) {
-      setError(error instanceof Error ? error.message : "An error occurred");
-      throw error;
+      toast({
+        title: "Success",
+        description: "Subname deleted successfully",
+      });
+    } catch (err) {
+      const errorMessage = getErrorMessage(err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: errorMessage,
+      });
+      throw err;
     }
   };
 
@@ -96,7 +115,7 @@ export const useSubnames = () => {
     error,
     isCreating,
     createSubname,
-    deleteSubname,
     updateSubname,
+    deleteSubname,
   };
 };

@@ -51,7 +51,7 @@ export const CreateSubnameForm = ({
 
   const filteredEnsNames =
     ensNames?.filter((ens) =>
-      ens.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      ens.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,7 +167,10 @@ export const CreateSubnameForm = ({
             placeholder="Enter your desired subname"
             value={formData.label}
             onChange={(e) =>
-              setFormData((prev) => ({ ...prev, label: e.target.value }))
+              setFormData((prev) => ({
+                ...prev,
+                label: e.target.value.toLowerCase(),
+              }))
             }
             disabled={!!subname}
           />
@@ -276,7 +279,10 @@ export const CreateSubnameForm = ({
             Cancel
           </Button>
         )}
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !formData.parentName || !formData.label}
+        >
           {isSubmitting
             ? "Saving..."
             : subname

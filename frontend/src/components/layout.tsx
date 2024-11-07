@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider } from "connectkit";
 import { WagmiProvider } from "wagmi";
 import Header from "./header";
+import { Toaster } from "./ui/toaster";
 
 export const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ export default function Layout({
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
+          <Toaster />
         </main>
       </div>
     </Providers>
