@@ -2,15 +2,11 @@ import { CopyableField } from "@/components/copyableField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { SubnameResponseDTO } from "@/types/subname.types";
 import { ChevronDown, Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
+import type { SubnameRowProps } from "../types";
 
-interface SubnameRowProps {
-  subname: SubnameResponseDTO;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => Promise<void>;
-}
+
 
 export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
   const [isDeleting, setIsDeleting] = useState(false);

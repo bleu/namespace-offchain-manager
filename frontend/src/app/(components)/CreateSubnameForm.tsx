@@ -2,16 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
-import type { SubnameResponseDTO } from "@/types/subname.types";
 import { ChevronDown, Plus, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-
-interface CreateSubnameFormProps {
-  subname?: SubnameResponseDTO | null;
-  onSubmit: (data: any) => Promise<void>;
-  onCancel?: () => void;
-  isSubmitting?: boolean;
-}
+import type { CreateSubnameFormProps } from "../types";
 
 export const CreateSubnameForm = ({
   subname,

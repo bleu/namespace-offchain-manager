@@ -1,11 +1,5 @@
-import type { SubnameResponseDTO } from "@/types/subname.types";
+import type { SubnameListProps } from "../types";
 import { SubnameRow } from "./SubnameRow";
-
-interface SubnameListProps {
-  subnames: SubnameResponseDTO[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => Promise<void>;
-}
 
 export const SubnameList = ({
   subnames,
