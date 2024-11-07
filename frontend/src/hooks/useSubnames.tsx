@@ -1,5 +1,5 @@
 import type { SubnameResponseDTO } from "@/types/subname.types";
-import { useState, useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const useSubnames = () => {
   const [subnames, setSubnames] = useState<SubnameResponseDTO[]>([]);
@@ -12,7 +12,7 @@ export const useSubnames = () => {
       setIsLoading(true);
       const response = await fetch("/api/subnames");
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to fetch subnames");
       }

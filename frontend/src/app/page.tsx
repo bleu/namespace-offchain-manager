@@ -1,17 +1,19 @@
 "use client";
 
-import { Loading } from "@/components/ui/loading";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { useSubnames } from "@/hooks/useSubnames";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loading } from "@/components/ui/loading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tab";
+import { useSubnames } from "@/hooks/useSubnames";
+import { ArrowLeft } from "lucide-react";
+import { useState } from "react";
 import { CreateSubnameForm } from "./(components)/CreateSubnameForm";
 import { SubnameList } from "./(components)/SubnameList";
 
 export default function Home() {
-  const [selectedSubnameId, setSelectedSubnameId] = useState<string | null>(null);
+  const [selectedSubnameId, setSelectedSubnameId] = useState<string | null>(
+    null,
+  );
   const {
     subnames,
     isLoading,
@@ -22,8 +24,8 @@ export default function Home() {
     updateSubname,
   } = useSubnames();
 
-  const selectedSubname = selectedSubnameId 
-    ? subnames.find(s => s.id === selectedSubnameId)
+  const selectedSubname = selectedSubnameId
+    ? subnames.find((s) => s.id === selectedSubnameId)
     : null;
 
   const handleBack = () => {
@@ -34,9 +36,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <Card className="p-4 bg-destructive/10 text-destructive">
-        {error}
-      </Card>
+      <Card className="p-4 bg-destructive/10 text-destructive">{error}</Card>
     );
   }
 
@@ -51,14 +51,16 @@ export default function Home() {
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
                 <CardTitle>
-                  {selectedSubname ? `Edit ${selectedSubname.name}` : 'Edit Subname'}
+                  {selectedSubname
+                    ? `Edit ${selectedSubname.name}`
+                    : "Edit Subname"}
                 </CardTitle>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
-                <CardTitle>Manage Subnames</CardTitle>  
+                <CardTitle>Manage Subnames</CardTitle>
                 <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-                  {subnames.length} subname{subnames.length !== 1 ? 's' : ''}
+                  {subnames.length} subname{subnames.length !== 1 ? "s" : ""}
                 </span>
               </div>
             )}

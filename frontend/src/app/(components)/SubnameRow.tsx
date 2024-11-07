@@ -1,10 +1,10 @@
 import { CopyableField } from "@/components/copyableField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 import type { SubnameResponseDTO } from "@/types/subname.types";
 import { ChevronDown, Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 
 interface SubnameRowProps {
   subname: SubnameResponseDTO;
@@ -17,7 +17,7 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this subname?')) {
+    if (window.confirm("Are you sure you want to delete this subname?")) {
       setIsDeleting(true);
       try {
         await onDelete(subname.id);
@@ -37,13 +37,13 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
         <div className="flex-1">
           <h3 className="font-medium">{subname.name}</h3>
           <p className="text-sm text-muted-foreground">
-            {subname.texts.length} tex  ts · {subname.addresses.length} addresses
+            {subname.texts.length} tex ts · {subname.addresses.length} addresses
           </p>
         </div>
         <ChevronDown
           className={cn(
             "h-5 w-5 text-muted-foreground transition-transform duration-200",
-            isExpanded ? "transform rotate-180" : ""
+            isExpanded ? "transform rotate-180" : "",
           )}
         />
       </div>
@@ -51,7 +51,7 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
       <div
         className={cn(
           "grid transition-all duration-200 ease-in-out",
-          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
         )}
       >
         <div className="overflow-hidden">
@@ -61,7 +61,10 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
                 <CopyableField label="Parent" value={subname.parentName} />
                 <CopyableField label="Subname " value={subname.label} />
                 {subname.contenthash && (
-                  <CopyableField label="Content Hash" value={subname.contenthash} />
+                  <CopyableField
+                    label="Content Hash"
+                    value={subname.contenthash}
+                  />
                 )}
               </div>
               <div className="space-y-4">
@@ -113,7 +116,7 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
                 disabled={isDeleting}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             </div>
           </CardContent>

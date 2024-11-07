@@ -7,10 +7,10 @@ interface SubnameListProps {
   onDelete: (id: string) => Promise<void>;
 }
 
-export const SubnameList = ({ 
-  subnames, 
+export const SubnameList = ({
+  subnames,
   onEdit,
-  onDelete 
+  onDelete,
 }: SubnameListProps) => {
   if (!subnames.length) {
     return (
