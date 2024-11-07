@@ -1,4 +1,4 @@
-import { SubnameService } from "@/services/subname.service";
+import { SubnameService } from "@/services/subname-service";
 import type { UpdateSubnameDTO } from "@/types/subname.types";
 import { type NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";

@@ -1,4 +1,4 @@
-import { SubnameService } from "@/services/subname.service";
+import { SubnameService } from "@/services/subname-service";
 import { NextResponse } from "next/server";
 
 export async function GET() {
