@@ -39,7 +39,7 @@ export const ManageSubnames = ({
               <div className="flex items-center justify-between w-full">
                 <CardTitle>Manage Subnames</CardTitle>
                 <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-                  {subnames.length} subname{subnames.length !== 1 ? "s" : ""}
+                  {pagination.total} subname{pagination.total !== 1 ? "s" : ""}
                 </span>
               </div>
             )}
