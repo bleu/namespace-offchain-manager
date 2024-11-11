@@ -9,6 +9,7 @@ export default function Page() {
   const [selectedSubnameId, setSelectedSubnameId] = useState<string | null>(
     null,
   );
+  const [activeTab, onTabChange] = useState("list");
 
   const {
     subnames,
@@ -31,6 +32,7 @@ export default function Page() {
 
   const handleCreate = async (data: CreateSubnameDTO) => {
     await createSubname(data);
+    onTabChange("list");
   };
 
   const handleUpdate = async (id: string, data: UpdateSubnameDTO) => {
@@ -45,6 +47,8 @@ export default function Page() {
       selectedSubname={selectedSubname}
       isSubmitting={isSubmitting}
       pagination={pagination}
+      activeTab={activeTab}
+      onTabChange={onTabChange}
       onChangePage={onChangePage}
       onBack={handleBack}
       onEdit={setSelectedSubnameId}

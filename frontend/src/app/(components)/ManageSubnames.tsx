@@ -14,6 +14,8 @@ export const ManageSubnames = ({
   selectedSubname,
   isSubmitting,
   pagination,
+  activeTab,
+  onTabChange,
   onChangePage,
   onBack,
   onEdit,
@@ -56,12 +58,11 @@ export const ManageSubnames = ({
               isSubmitting={isSubmitting}
             />
           ) : (
-            <Tabs defaultValue="list">
+            <Tabs value={activeTab} onValueChange={onTabChange}>
               <TabsList>
                 <TabsTrigger value="list">Subname List</TabsTrigger>
                 <TabsTrigger value="create">Create Subname</TabsTrigger>
               </TabsList>
-
               <TabsContent value="list" className="mt-6">
                 <SubnameList
                   subnames={subnames}
@@ -74,7 +75,6 @@ export const ManageSubnames = ({
                   onPageChange={onChangePage}
                 />
               </TabsContent>
-
               <TabsContent value="create" className="mt-6">
                 <CreateSubnameForm
                   onSubmit={onCreate}
