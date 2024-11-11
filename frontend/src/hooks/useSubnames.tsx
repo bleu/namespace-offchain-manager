@@ -1,4 +1,5 @@
 import { useToast } from "@/components/ui/hooks/use-toast";
+import { type ActionType, TOAST_MESSAGES, type ToastType } from "@/constants/toastMessages";
 import { subnameClient } from "@/services/subname-client";
 import type {
   CreateSubnameDTO,
@@ -31,6 +32,34 @@ export const useSubnames = () => {
       : "An unexpected error occurred";
   };
 
+  const showToast = useCallback(
+    (
+      type: ToastType,
+      action: ActionType,
+      data?: { label?: string; parentName?: string },
+    ) => {
+      const message =
+        type === "success"
+          ? TOAST_MESSAGES.success[action]
+          : TOAST_MESSAGES.error[action];
+
+      if (!message) return;
+
+      if (typeof message === "function" && data) {
+        toast({
+          variant: type === "error" ? "destructive" : "default",
+          ...message(data.label ?? "", data.parentName ?? ""),
+        });
+      } else if (typeof message === "object") {
+        toast({
+          variant: type === "error" ? "destructive" : "default",
+          ...message,
+        });
+      }
+    },
+    [toast],
+  );
+
   const updatePagination = useCallback(
     (meta: {
       page: number;
@@ -60,16 +89,12 @@ export const useSubnames = () => {
       } catch (err) {
         const errorMessage = getErrorMessage(err);
         setError(errorMessage);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: errorMessage,
-        });
+        showToast("error", "fetch");
       } finally {
         setIsLoading(false);
       }
     },
-    [pagination.pageSize, toast, updatePagination],
+    [pagination.page, updatePagination],
   );
 
   const changePage = (newPage: number) => {
@@ -83,18 +108,13 @@ export const useSubnames = () => {
       setIsCreating(true);
       const result = await subnameClient.create(data);
       await fetchSubnames();
-      toast({
-        title: "Success",
-        description: `Subname ${data.label}.${data.parentName} created successfully`,
+      showToast('success', 'create', {
+        label: data.label,
+        parentName: data.parentName,
       });
       return result;
     } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: errorMessage,
-      });
+      showToast('error', 'create');
       throw err;
     } finally {
       setIsCreating(false);
@@ -105,18 +125,10 @@ export const useSubnames = () => {
     try {
       const result = await subnameClient.update(id, data);
       await fetchSubnames();
-      toast({
-        title: "Success",
-        description: "Subname updated successfully",
-      });
+      showToast("success", "update");
       return result;
     } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: errorMessage,
-      });
+      showToast("error", "update");
       throw err;
     }
   };
@@ -125,17 +137,9 @@ export const useSubnames = () => {
     try {
       await subnameClient.delete(id);
       await fetchSubnames();
-      toast({
-        title: "Success",
-        description: "Subname deleted successfully",
-      });
+      showToast("success", "delete");
     } catch (err) {
-      const errorMessage = getErrorMessage(err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: errorMessage,
-      });
+      showToast("error", "delete");
       throw err;
     }
   };
