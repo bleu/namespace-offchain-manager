@@ -1,17 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
-import { ArrowLeft } from "lucide-react";
-import { CreateSubnameForm } from "./CreateSubnameForm";
-import { SubnameList } from "./SubnameList";
-import type { ManageSubnamesProps } from "../types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tab";
+import { ArrowLeft } from "lucide-react";
+import type { ManageSubnamesProps } from "../types";
+import { CreateSubnameForm } from "./CreateSubnameForm";
+import { Pagination } from "./Pagination";
+import { SubnameList } from "./SubnameList";
 
 export const ManageSubnames = ({
   isLoading,
   subnames,
   selectedSubname,
   isCreating,
+  pagination,
+  onChangePage,
   onBack,
   onEdit,
   onDelete,
@@ -30,9 +33,7 @@ export const ManageSubnames = ({
                 <Button variant="ghost" size="icon" onClick={onBack}>
                   <ArrowLeft className="h-4 w-4" />
                 </Button>
-                <CardTitle>
-                  Edit {selectedSubname.name}
-                </CardTitle>
+                <CardTitle>Edit {selectedSubname.name}</CardTitle>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full">
@@ -66,6 +67,11 @@ export const ManageSubnames = ({
                   subnames={subnames}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                />
+                <Pagination
+                  pagination={pagination}
+                  isLoading={isLoading}
+                  onPageChange={onChangePage}
                 />
               </TabsContent>
 

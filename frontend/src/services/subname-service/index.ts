@@ -5,6 +5,7 @@ import {
 } from "@/schemas/subname.schema";
 import type {
   CreateSubnameDTO,
+  PaginatedResponse,
   SubnameResponseDTO,
   SubscriptionPackResponseDTO,
   UpdateSubnameDTO,
@@ -18,7 +19,7 @@ export class SubnameService {
     duration: number;
     maxSubnames: number;
   }): Promise<SubscriptionPackResponseDTO> {
-    const pack = await prisma.subscriptionPack.create({
+    return await prisma.subscriptionPack.create({
       data: {
         name: data.name,
         price: new Prisma.Decimal(data.price),
@@ -26,11 +27,6 @@ export class SubnameService {
         maxSubnames: data.maxSubnames,
       },
     });
-
-    return {
-      ...pack,
-      price: Number(pack.price),
-    };
   }
 
   async validateCreateSubname(data: CreateSubnameDTO) {
@@ -55,7 +51,7 @@ export class SubnameService {
       throw new Error("Subname already exists");
     }
 
-    const subname = await prisma.subname.create({
+    return await prisma.subname.create({
       data: {
         parentName: validatedData.parentName,
         label: validatedData.label,
@@ -75,19 +71,23 @@ export class SubnameService {
         subscriptionPack: true,
       },
     });
-
-    return {
-      ...subname,
-      contenthash: subname.contenthash ?? null,
-      subscriptionPack: {
-        ...subname.subscriptionPack,
-        price: Number(subname.subscriptionPack.price),
-      },
-    };
   }
 
-  async getAllSubnames(): Promise<SubnameResponseDTO[]> {
+  async getAllSubnames(
+    page = 1,
+    pageSize = 10,
+  ): Promise<PaginatedResponse<SubnameResponseDTO>> {
+    const total = await prisma.subname.count();
+
+    const totalPages = Math.ceil(total / pageSize);
+    const skip = (page - 1) * pageSize;
+
     const subnames = await prisma.subname.findMany({
+      skip,
+      take: pageSize,
+      orderBy: {
+        createdAt: "desc",
+      },
       include: {
         subscriptionPack: true,
         texts: true,
@@ -95,14 +95,16 @@ export class SubnameService {
       },
     });
 
-    return subnames.map((subname) => ({
-      ...subname,
-      contenthash: subname.contenthash ?? null,
-      subscriptionPack: {
-        ...subname.subscriptionPack,
-        price: Number(subname.subscriptionPack.price),
+    return {
+      data: subnames,
+      meta: {
+        total,
+        page,
+        pageSize,
+        totalPages,
+        hasMore: page < totalPages,
       },
-    }));
+    };
   }
 
   async getSubname(id: string): Promise<SubnameResponseDTO | null> {
@@ -117,14 +119,7 @@ export class SubnameService {
 
     if (!subname) return null;
 
-    return {
-      ...subname,
-      contenthash: subname.contenthash ?? null,
-      subscriptionPack: {
-        ...subname.subscriptionPack,
-        price: Number(subname.subscriptionPack.price),
-      },
-    };
+    return subname;
   }
 
   async updateSubname(
@@ -172,14 +167,7 @@ export class SubnameService {
       },
     });
 
-    return {
-      ...subname,
-      contenthash: subname.contenthash ?? null,
-      subscriptionPack: {
-        ...subname.subscriptionPack,
-        price: Number(subname.subscriptionPack.price),
-      },
-    };
+    return subname;
   }
 
   async deleteSubname(id: string): Promise<void> {

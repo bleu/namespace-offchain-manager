@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import { useSubnames } from "@/hooks/useSubnames";
-import { ManageSubnames } from "./(components)/ManageSubnames";
 import type { CreateSubnameDTO, UpdateSubnameDTO } from "@/types/subname.types";
+import { useState } from "react";
+import { ManageSubnames } from "./(components)/ManageSubnames";
 
 export default function Page() {
-  const [selectedSubnameId, setSelectedSubnameId] = useState<string | null>(null);
-  
+  const [selectedSubnameId, setSelectedSubnameId] = useState<string | null>(
+    null,
+  );
+
   const {
     subnames,
     isLoading,
@@ -15,6 +17,8 @@ export default function Page() {
     createSubname,
     deleteSubname,
     updateSubname,
+    pagination,
+    onChangePage,
   } = useSubnames();
 
   const selectedSubname = selectedSubnameId
@@ -40,6 +44,8 @@ export default function Page() {
       subnames={subnames}
       selectedSubname={selectedSubname}
       isCreating={isCreating}
+      pagination={pagination}
+      onChangePage={onChangePage}
       onBack={handleBack}
       onEdit={setSelectedSubnameId}
       onDelete={deleteSubname}

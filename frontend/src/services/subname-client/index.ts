@@ -1,5 +1,6 @@
 import type {
   CreateSubnameDTO,
+  PaginatedResponse,
   SubnameResponseDTO,
   UpdateSubnameDTO,
 } from "@/types/subname.types";
@@ -13,8 +14,13 @@ const api = axios.create({
 });
 
 export const subnameClient = {
-  getAll: async (): Promise<SubnameResponseDTO[]> => {
-    const { data } = await api.get<SubnameResponseDTO[]>("/subnames");
+  getAll: async (
+    page = 1,
+    pageSize = 10,
+  ): Promise<PaginatedResponse<SubnameResponseDTO>> => {
+    const { data } = await api.get<PaginatedResponse<SubnameResponseDTO>>(
+      `/subnames?page=${page}&pageSize=${pageSize}`,
+    );
     return data;
   },
 
