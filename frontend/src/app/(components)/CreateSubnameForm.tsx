@@ -126,6 +126,7 @@ export const CreateSubnameForm = ({
       addresses: formData.addresses.filter((a) => a.value),
     };
     await onSubmit(data);
+    window.location.reload();
   };
 
   return (
