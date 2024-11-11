@@ -27,7 +27,6 @@ export const CreateSubnameForm = ({
     fetchEnsNames();
   }, [fetchEnsNames]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -47,30 +46,86 @@ export const CreateSubnameForm = ({
       ens.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const data = {
-      ...formData,
-      texts: formData.texts.filter((t) => t.key && t.value),
-      addresses: formData.addresses.filter((a) => a.value),
-    };
-
-    await onSubmit(data);
+  const handleEnsSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
-  const addText = () => {
+  const handleEnsSelect = (ensName: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      parentName: ensName,
+    }));
+    setIsOpen(false);
+    setSearchTerm("");
+  };
+
+  const handleToggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      label: e.target.value.toLowerCase(),
+    }));
+  };
+
+  const handleAddText = () => {
     setFormData((prev) => ({
       ...prev,
       texts: [...prev.texts, { key: "", value: "" }],
     }));
   };
 
-  const addAddress = () => {
+  const handleTextKeyChange = (index: number, value: string) => {
+    const newTexts = [...formData.texts];
+    newTexts[index].key = value;
+    setFormData((prev) => ({ ...prev, texts: newTexts }));
+  };
+
+  const handleTextValueChange = (index: number, value: string) => {
+    const newTexts = [...formData.texts];
+    newTexts[index].value = value;
+    setFormData((prev) => ({ ...prev, texts: newTexts }));
+  };
+
+  const handleRemoveText = (index: number) => {
+    const newTexts = formData.texts.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, texts: newTexts }));
+  };
+
+  const handleAddAddress = () => {
     setFormData((prev) => ({
       ...prev,
       addresses: [...prev.addresses, { coin: 60, value: "" }],
     }));
+  };
+
+  const handleCoinTypeChange = (index: number, value: string) => {
+    const newAddresses = [...formData.addresses];
+    newAddresses[index].coin = Number.parseInt(value);
+    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
+  };
+
+  const handleAddressValueChange = (index: number, value: string) => {
+    const newAddresses = [...formData.addresses];
+    newAddresses[index].value = value;
+    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
+  };
+
+  const handleRemoveAddress = (index: number) => {
+    const newAddresses = formData.addresses.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const data = {
+      ...formData,
+      texts: formData.texts.filter((t) => t.key && t.value),
+      addresses: formData.addresses.filter((a) => a.value),
+    };
+    await onSubmit(data);
   };
 
   return (
@@ -85,7 +140,7 @@ export const CreateSubnameForm = ({
               type="button"
               variant="outline"
               className="w-full justify-between"
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={handleToggleDropdown}
               disabled={!!subname}
             >
               <span className="truncate">
@@ -110,7 +165,7 @@ export const CreateSubnameForm = ({
                       className="w-full pl-8 pr-4 py-2 bg-background border rounded-md text-sm"
                       id="parentName"
                       value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onChange={handleEnsSearchChange}
                     />
                   </div>
                 </div>
@@ -121,14 +176,7 @@ export const CreateSubnameForm = ({
                         key={ens.id}
                         type="button"
                         className="w-full px-4 py-2 text-left hover:bg-accent text-sm"
-                        onClick={() => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            parentName: ens.name ?? "",
-                          }));
-                          setIsOpen(false);
-                          setSearchTerm("");
-                        }}
+                        onClick={() => handleEnsSelect(ens.name ?? "")}
                       >
                         {ens.name}
                       </button>
@@ -159,12 +207,7 @@ export const CreateSubnameForm = ({
             id="subname"
             placeholder="Enter your desired subname"
             value={formData.label}
-            onChange={(e) =>
-              setFormData((prev) => ({
-                ...prev,
-                label: e.target.value.toLowerCase(),
-              }))
-            }
+            onChange={handleLabelChange}
             disabled={!!subname}
           />
         </div>
@@ -173,7 +216,12 @@ export const CreateSubnameForm = ({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium">Texts</h3>
-          <Button type="button" variant="outline" size="sm" onClick={addText}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={handleAddText}
+          >
             <Plus className="h-4 w-4 mr-2" />
             Add Text
           </Button>
@@ -184,29 +232,18 @@ export const CreateSubnameForm = ({
             <Input
               placeholder="Key"
               value={text.key}
-              onChange={(e) => {
-                const newTexts = [...formData.texts];
-                newTexts[index].key = e.target.value;
-                setFormData((prev) => ({ ...prev, texts: newTexts }));
-              }}
+              onChange={(e) => handleTextKeyChange(index, e.target.value)}
             />
             <Input
               placeholder="Value"
               value={text.value}
-              onChange={(e) => {
-                const newTexts = [...formData.texts];
-                newTexts[index].value = e.target.value;
-                setFormData((prev) => ({ ...prev, texts: newTexts }));
-              }}
+              onChange={(e) => handleTextValueChange(index, e.target.value)}
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => {
-                const newTexts = formData.texts.filter((_, i) => i !== index);
-                setFormData((prev) => ({ ...prev, texts: newTexts }));
-              }}
+              onClick={() => handleRemoveText(index)}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -221,7 +258,7 @@ export const CreateSubnameForm = ({
             type="button"
             variant="outline"
             size="sm"
-            onClick={addAddress}
+            onClick={handleAddAddress}
           >
             <Plus className="h-4 w-4 mr-2" />
             Add Address
@@ -234,31 +271,18 @@ export const CreateSubnameForm = ({
               type="number"
               placeholder="Coin Type"
               value={address.coin}
-              onChange={(e) => {
-                const newAddresses = [...formData.addresses];
-                newAddresses[index].coin = Number.parseInt(e.target.value);
-                setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-              }}
+              onChange={(e) => handleCoinTypeChange(index, e.target.value)}
             />
             <Input
               placeholder="Address"
               value={address.value}
-              onChange={(e) => {
-                const newAddresses = [...formData.addresses];
-                newAddresses[index].value = e.target.value;
-                setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-              }}
+              onChange={(e) => handleAddressValueChange(index, e.target.value)}
             />
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => {
-                const newAddresses = formData.addresses.filter(
-                  (_, i) => i !== index,
-                );
-                setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-              }}
+              onClick={() => handleRemoveAddress(index)}
             >
               <X className="h-4 w-4" />
             </Button>
