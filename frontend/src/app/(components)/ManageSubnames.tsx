@@ -12,7 +12,7 @@ export const ManageSubnames = ({
   isLoading,
   subnames,
   selectedSubname,
-  isCreating,
+  isSubmitting,
   pagination,
   onChangePage,
   onBack,
@@ -53,7 +53,7 @@ export const ManageSubnames = ({
                 await onUpdate(selectedSubname.id, data);
               }}
               onCancel={onBack}
-              isSubmitting={isCreating}
+              isSubmitting={isSubmitting}
             />
           ) : (
             <Tabs defaultValue="list">
@@ -78,7 +78,7 @@ export const ManageSubnames = ({
               <TabsContent value="create" className="mt-6">
                 <CreateSubnameForm
                   onSubmit={onCreate}
-                  isSubmitting={isCreating}
+                  isSubmitting={isSubmitting}
                 />
               </TabsContent>
             </Tabs>

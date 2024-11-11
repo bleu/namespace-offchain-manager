@@ -300,12 +300,9 @@ export const CreateSubnameForm = ({
         <Button
           type="submit"
           disabled={isSubmitting || !formData.parentName || !formData.label}
+          loading={isSubmitting}
         >
-          {isSubmitting
-            ? "Saving..."
-            : subname
-              ? "Update Subname"
-              : "Create Subname"}
+          {subname ? "Update Subname" : "Create Subname"}
         </Button>
       </div>
     </form>

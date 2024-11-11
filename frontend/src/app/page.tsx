@@ -13,7 +13,7 @@ export default function Page() {
   const {
     subnames,
     isLoading,
-    isCreating,
+    isSubmitting,
     createSubname,
     deleteSubname,
     updateSubname,
@@ -43,7 +43,7 @@ export default function Page() {
       isLoading={isLoading}
       subnames={subnames}
       selectedSubname={selectedSubname}
-      isCreating={isCreating}
+      isSubmitting={isSubmitting}
       pagination={pagination}
       onChangePage={onChangePage}
       onBack={handleBack}

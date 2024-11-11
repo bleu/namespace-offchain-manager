@@ -27,7 +27,7 @@ export interface ManageSubnamesProps {
   isLoading: boolean;
   subnames: SubnameResponseDTO[];
   selectedSubname: SubnameResponseDTO | null;
-  isCreating: boolean;
+  isSubmitting: boolean;
   pagination: PaginationMeta;
   onChangePage: (page: number) => void;
   onBack: () => void;

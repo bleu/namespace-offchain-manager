@@ -1,19 +1,29 @@
-import useSWR from 'swr';
-import { subnameClient } from '@/services/subname-client';
-import type { CreateSubnameDTO, PaginatedResponse, SubnameResponseDTO, UpdateSubnameDTO } from '@/types/subname.types';
-import { useToast } from '@/components/ui/hooks/use-toast';
-import { type ActionType, TOAST_MESSAGES, type ToastType } from '@/constants/toastMessages';
-import { useCallback, useState } from 'react';
+import { useToast } from "@/components/ui/hooks/use-toast";
+import {
+  type ActionType,
+  TOAST_MESSAGES,
+  type ToastType,
+} from "@/constants/toastMessages";
+import { subnameClient } from "@/services/subname-client";
+import type {
+  CreateSubnameDTO,
+  PaginatedResponse,
+  SubnameResponseDTO,
+  UpdateSubnameDTO,
+} from "@/types/subname.types";
+import { useCallback, useState } from "react";
+import useSWR from "swr";
 
 export const useSubnames = () => {
   const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
   const getErrorMessage = (error: unknown): string => {
     if (error instanceof Error) {
       return error.message;
     }
-    return 'An unexpected error occurred';
+    return "An unexpected error occurred";
   };
 
   const showToast = useCallback(
@@ -23,20 +33,20 @@ export const useSubnames = () => {
       data?: { label?: string; parentName?: string },
     ) => {
       const message =
-        type === 'success'
+        type === "success"
           ? TOAST_MESSAGES.success[action]
           : TOAST_MESSAGES.error[action];
 
       if (!message) return;
 
-      if (typeof message === 'function' && data) {
+      if (typeof message === "function" && data) {
         toast({
-          variant: type === 'error' ? 'destructive' : 'default',
-          ...message(data.label ?? '', data.parentName ?? ''),
+          variant: type === "error" ? "destructive" : "default",
+          ...message(data.label ?? "", data.parentName ?? ""),
         });
-      } else if (typeof message === 'object') {
+      } else if (typeof message === "object") {
         toast({
-          variant: type === 'error' ? 'destructive' : 'default',
+          variant: type === "error" ? "destructive" : "default",
           ...message,
         });
       }
@@ -44,16 +54,24 @@ export const useSubnames = () => {
     [toast],
   );
 
-  const { data: subnames, error: subNamesError, isLoading, mutate } =
-    useSWR<PaginatedResponse<SubnameResponseDTO>>(
-      '/api/subnames?page=1&pageSize=10',
-      () => subnameClient.getAll(),
-    );
+  const {
+    data: subnames,
+    error: subNamesError,
+    isLoading,
+    mutate,
+  } = useSWR<PaginatedResponse<SubnameResponseDTO>>(
+    "/api/subnames?page=1&pageSize=10",
+    () => subnameClient.getAll(),
+  );
 
-    const changePage = async (newPage: number) => {
-      if (newPage >= 1 && newPage <= (subnames?.meta.totalPages || 0)) {
-        const response = await subnameClient.getAll(newPage, subnames?.meta.pageSize);
-        await mutate((prev: PaginatedResponse<SubnameResponseDTO> | undefined) => {
+  const changePage = async (newPage: number) => {
+    if (newPage >= 1 && newPage <= (subnames?.meta.totalPages || 0)) {
+      const response = await subnameClient.getAll(
+        newPage,
+        subnames?.meta.pageSize,
+      );
+      await mutate(
+        (prev: PaginatedResponse<SubnameResponseDTO> | undefined) => {
           if (prev) {
             return {
               ...prev,
@@ -65,22 +83,24 @@ export const useSubnames = () => {
             };
           }
           return prev;
-        }, false);
-      }
-    };
+        },
+        false,
+      );
+    }
+  };
 
   const createSubname = async (data: CreateSubnameDTO) => {
     try {
       setIsCreating(true);
       const result = await subnameClient.create(data);
       await mutate();
-      showToast('success', 'create', {
+      showToast("success", "create", {
         label: data.label,
         parentName: data.parentName,
       });
       return result;
     } catch (err) {
-      showToast('error', 'create');
+      showToast("error", "create");
       throw getErrorMessage(err);
     } finally {
       setIsCreating(false);
@@ -89,13 +109,17 @@ export const useSubnames = () => {
 
   const updateSubname = async (id: string, data: UpdateSubnameDTO) => {
     try {
+      setIsUpdating(true);
       const result = await subnameClient.update(id, data);
+      console.log(result, "result");
       await mutate();
-      showToast('success', 'update');
+      showToast("success", "update");
       return result;
     } catch (err) {
-      showToast('error', 'update');
+      showToast("error", "update");
       throw getErrorMessage(err);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -103,10 +127,9 @@ export const useSubnames = () => {
     try {
       await subnameClient.delete(id);
       await mutate();
-      showToast('success', 'delete');
+      showToast("success", "delete");
     } catch (err) {
-      console.log('err:', err);
-      showToast('error', 'delete');
+      showToast("error", "delete");
       throw getErrorMessage(err);
     }
   };
@@ -115,7 +138,7 @@ export const useSubnames = () => {
     subnames: subnames?.data || [],
     isLoading,
     error: subNamesError,
-    isCreating,
+    isSubmitting: isCreating || isUpdating,
     pagination: {
       page: subnames?.meta.page,
       pageSize: subnames?.meta.pageSize,
