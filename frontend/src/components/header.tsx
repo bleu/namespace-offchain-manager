@@ -16,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "@/hooks/useAuth";
 import { cn, truncateAddress } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
 import { ConnectKitButton } from "connectkit";
@@ -41,12 +42,30 @@ const LINKS = [
 ];
 
 export const CustomConnectButton = ({ className }: { className?: string }) => {
+  const { isAuthenticated, signIn, signOut } = useAuth();
+
   return (
     <ConnectKitButton.Custom>
       {({ isConnected, show }) => {
+        if (!isConnected) {
+          return (
+            <Button onClick={show} variant={"outline"} className={className}>
+              Connect Wallet
+            </Button>
+          );
+        }
+
+        if (!isAuthenticated) {
+          return (
+            <Button onClick={signIn} variant={"outline"} className={className}>
+              Sign In
+            </Button>
+          );
+        }
+
         return (
-          <Button onClick={show} variant={"outline"} className={className}>
-            {isConnected ? "Manage Connection" : "Connect Connect"}
+          <Button onClick={signOut} variant={"outline"} className={className}>
+            Sign Out
           </Button>
         );
       }}
@@ -56,6 +75,11 @@ export const CustomConnectButton = ({ className }: { className?: string }) => {
 
 const Navigation = () => {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <nav className="flex items-center space-x-4">
@@ -86,6 +110,7 @@ export default function Header() {
     setSelectedEns,
     fetchEnsNames,
   } = useEnsStore();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isConnected && address && chainId) {
@@ -99,7 +124,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Navigation />
         <div className="flex items-center space-x-4">
-          {isConnected ? (
+          {isConnected && isAuthenticated ? (
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button

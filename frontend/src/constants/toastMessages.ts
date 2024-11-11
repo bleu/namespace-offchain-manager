@@ -16,6 +16,10 @@ export const TOAST_MESSAGES = {
       title: "Success",
       description: "Subname deleted successfully",
     },
+    siwe: {
+      title: "Success",
+      description: "Successfully signed in with Ethereum",
+    },  
   },
   error: {
     fetch: {
@@ -34,5 +38,9 @@ export const TOAST_MESSAGES = {
       title: "Error",
       description: "Failed to delete subname",
     },
+    siwe: {
+      title: "Success",
+      description: "Failed to signed in with Ethereum",
+    },  
   },
 } as const;
