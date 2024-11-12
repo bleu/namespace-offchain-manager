@@ -32,11 +32,9 @@ export const CreateSubnameForm = ({
     defaultValues: {
       parentName: subname?.parentName ?? "",
       label: subname?.label || "",
-      texts: subname?.texts?.length ? subname.texts : [{ key: "", value: "" }],
-      addresses: subname?.addresses?.length
-        ? subname.addresses
-        : [{ coin: 60, value: "" }],
-      subscriptionPackId: subname?.subscriptionPack.id ?? "",
+      texts: subname?.texts?.length ? subname.texts : [],
+      addresses: subname?.addresses?.length ? subname.addresses : [],
+      subscriptionPackId: subname?.subscriptionPackId ?? "",
     },
     mode: "onChange",
   });
@@ -135,6 +133,12 @@ export const CreateSubnameForm = ({
     await onSubmit(filteredData);
   };
 
+  const isFormValid =
+    form.watch("parentName") &&
+    form.watch("label") &&
+    !form.formState.errors.parentName &&
+    !form.formState.errors.label;
+
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-4">
@@ -229,7 +233,7 @@ export const CreateSubnameForm = ({
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Texts</h3>
+          <h3 className="text-sm font-medium">Texts (Optional)</h3>
           <Button
             type="button"
             variant="outline"
@@ -279,7 +283,7 @@ export const CreateSubnameForm = ({
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Addresses</h3>
+          <h3 className="text-sm font-medium">Addresses (Optional)</h3>
           <Button
             type="button"
             variant="outline"
@@ -344,7 +348,7 @@ export const CreateSubnameForm = ({
         )}
         <Button
           type="submit"
-          disabled={isSubmitting || !form.formState.isValid}
+          disabled={isSubmitting || !isFormValid}
           loading={isSubmitting}
         >
           {subname ? "Update Subname" : "Create Subname"}
