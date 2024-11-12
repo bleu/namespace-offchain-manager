@@ -151,7 +151,7 @@ export const useSubnames = () => {
 
   return {
     subnames: subnames?.data || [],
-    isLoading: isPageLoading,
+    isLoading,
     error: subNamesError,
     isSubmitting: isCreating || isUpdating,
     pagination: {
