@@ -26,8 +26,12 @@ export const subnameClient = {
   getAll: async (
     page = 1,
     pageSize = 10,
+    parentNames?: string[],
   ): Promise<PaginatedResponse<SubnameResponseDTO>> => {
-    return api(`/api/subnames?page=${page}&pageSize=${pageSize}`);
+    const parentNamesParam = parentNames?.length 
+      ? `&parentNames=${parentNames.join(",")}` 
+      : "";
+    return api(`/api/subnames?page=${page}&pageSize=${pageSize}${parentNamesParam}`);
   },
 
   getById: async (id: string): Promise<SubnameResponseDTO> => {

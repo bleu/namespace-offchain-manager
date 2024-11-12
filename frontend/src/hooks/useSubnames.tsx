@@ -5,6 +5,7 @@ import {
   type ToastType,
 } from "@/constants/toastMessages";
 import { subnameClient } from "@/services/subname-client";
+import { useEnsStore } from "@/states/useEnsStore";
 import type {
   CreateSubnameDTO,
   PaginatedResponse,
@@ -17,7 +18,10 @@ import useSWR from "swr";
 export const useSubnames = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { ensNames } = useEnsStore();
   const { toast } = useToast();
+
+  const names = ensNames?.map((name) => name.name) || [];
 
   const getErrorMessage = (error: unknown): string => {
     if (error instanceof Error) {
@@ -53,7 +57,6 @@ export const useSubnames = () => {
     },
     [toast],
   );
-
   const {
     data: subnames,
     error: subNamesError,
@@ -61,7 +64,7 @@ export const useSubnames = () => {
     mutate,
   } = useSWR<PaginatedResponse<SubnameResponseDTO>>(
     "/api/subnames?page=1&pageSize=10",
-    () => subnameClient.getAll(),
+    () => subnameClient.getAll(1, 10, names),
   );
 
   const changePage = async (newPage: number) => {
