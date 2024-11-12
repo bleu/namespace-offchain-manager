@@ -65,18 +65,18 @@ export const CustomConnectButton = ({ className }: { className?: string }) => {
 
   return (
     <ConnectKitButton.Custom>
-    {({ isConnecting, show }) => (
-      <Button
-        variant="outline"
-        onClick={isConnected ? handleAuth : show}
-        disabled={isConnecting}
-        className={className}
-        loading={isConnecting}
-      >
-        {getButtonText()}
-      </Button>
-    )}
-  </ConnectKitButton.Custom>
+      {({ isConnecting, show }) => (
+        <Button
+          variant="outline"
+          onClick={isConnected ? handleAuth : show}
+          disabled={isConnecting}
+          className={className}
+          loading={isConnecting}
+        >
+          {getButtonText()}
+        </Button>
+      )}
+    </ConnectKitButton.Custom>
   );
 };
 

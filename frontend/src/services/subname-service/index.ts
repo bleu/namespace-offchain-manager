@@ -78,23 +78,36 @@ export class SubnameService {
     pageSize = 10,
     parentNames?: string[],
   ): Promise<PaginatedResponse<SubnameResponseDTO>> {
-    const whereClause = parentNames?.length
-      ? {
-          parentName: {
-            in: parentNames,
-          },
-        }
-      : undefined;
+    if (!parentNames?.length) {
+      return {
+        data: [],
+        meta: {
+          total: 0,
+          page,
+          pageSize,
+          totalPages: 0,
+          hasMore: false,
+        },
+      };
+    }
 
     const total = await prisma.subname.count({
-      where: whereClause,
+      where: {
+        parentName: {
+          in: parentNames,
+        },
+      },
     });
 
     const totalPages = Math.ceil(total / pageSize);
     const skip = (page - 1) * pageSize;
 
     const subnames = await prisma.subname.findMany({
-      where: whereClause,
+      where: {
+        parentName: {
+          in: parentNames,
+        },
+      },
       skip,
       take: pageSize,
       orderBy: {

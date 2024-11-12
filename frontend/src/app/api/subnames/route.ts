@@ -6,10 +6,17 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const page = Number.parseInt(searchParams.get("page") || "1");
     const pageSize = Number.parseInt(searchParams.get("pageSize") || "10");
-    const parentNames = searchParams.get("parentNames")?.split(",").filter(Boolean);
+    const parentNames = searchParams
+      .get("parentNames")
+      ?.split(",")
+      .filter(Boolean);
 
     const subnameService = new SubnameService();
-    const subnames = await subnameService.getAllSubnames(page, pageSize, parentNames);
+    const subnames = await subnameService.getAllSubnames(
+      page,
+      pageSize,
+      parentNames,
+    );
 
     return NextResponse.json(subnames);
   } catch (error) {
