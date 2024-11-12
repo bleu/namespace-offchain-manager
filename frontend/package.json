@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ensdomains/ensjs": "^4.0.1-alpha.0",
+    "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-popover": "^1.1.2",
@@ -29,6 +30,7 @@
     "next-auth": "^4.24.10",
     "react": "19.0.0-rc-cd22717c-20241013",
     "react-dom": "19.0.0-rc-cd22717c-20241013",
+    "react-hook-form": "^7.53.2",
     "react-i18next": "^15.1.1",
     "siwe": "^2.3.2",
     "swr": "^2.2.5",
