@@ -19,7 +19,7 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { cn, truncateAddress } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
-import { ConnectKitButton } from "connectkit";
+import { ConnectKitButton, useSIWE } from "connectkit";
 import { User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -43,33 +43,40 @@ const LINKS = [
 
 export const CustomConnectButton = ({ className }: { className?: string }) => {
   const { isAuthenticated, signIn, signOut } = useAuth();
+  const { isConnected } = useAccount();
+
+  const getButtonText = () => {
+    if (!isConnected) return "Connect Wallet";
+    if (isAuthenticated) return "Sign Out";
+    return "Sign-In with Ethereum";
+  };
+
+  const handleAuth = async () => {
+    if (!isConnected) {
+      // This will open the ConnectKit modal
+      return;
+    }
+    if (!isAuthenticated) {
+      await signIn();
+    } else {
+      await signOut();
+    }
+  };
 
   return (
     <ConnectKitButton.Custom>
-      {({ isConnected, show }) => {
-        if (!isConnected) {
-          return (
-            <Button onClick={show} variant={"outline"} className={className}>
-              Connect Wallet
-            </Button>
-          );
-        }
-
-        if (!isAuthenticated) {
-          return (
-            <Button onClick={signIn} variant={"outline"} className={className}>
-              Sign In With Ethereum
-            </Button>
-          );
-        }
-
-        return (
-          <Button onClick={signOut} variant={"outline"} className={className}>
-            Sign Out
-          </Button>
-        );
-      }}
-    </ConnectKitButton.Custom>
+    {({ isConnecting, show }) => (
+      <Button
+        variant="outline"
+        onClick={isConnected ? handleAuth : show}
+        disabled={isConnecting}
+        className={className}
+        loading={isConnecting}
+      >
+        {getButtonText()}
+      </Button>
+    )}
+  </ConnectKitButton.Custom>
   );
 };
 
