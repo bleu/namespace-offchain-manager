@@ -1,7 +1,7 @@
-import { SiweMessage } from "siwe";
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { SiweMessage } from "siwe";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -20,7 +20,6 @@ export const authOptions: NextAuthOptions = {
           const result = await siwe.verify({
             signature: credentials.signature,
           });
-          console.log('result', result);
 
           if (result.success) {
             return {

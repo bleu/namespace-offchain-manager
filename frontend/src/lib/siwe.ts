@@ -1,4 +1,4 @@
-import {  SiweMessage } from "siwe";
+import { SiweMessage } from "siwe";
 
 export function generateSiweMessage(address: string, chainId: number) {
   return new SiweMessage({

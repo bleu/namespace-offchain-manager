@@ -1,5 +1,11 @@
 export type ToastType = "error" | "success";
-export type ActionType = "fetch" | "create" | "update" | "delete";
+export type ActionType =
+  | "fetch"
+  | "create"
+  | "update"
+  | "delete"
+  | "siwe"
+  | "authentication";
 
 export const TOAST_MESSAGES = {
   success: {
@@ -19,7 +25,7 @@ export const TOAST_MESSAGES = {
     siwe: {
       title: "Success",
       description: "Successfully signed in with Ethereum",
-    },  
+    },
   },
   error: {
     fetch: {
@@ -41,6 +47,10 @@ export const TOAST_MESSAGES = {
     siwe: {
       title: "Success",
       description: "Failed to signed in with Ethereum",
-    },  
+    },
+    authentication: {
+      title: "Error",
+      description: "Please sign in with Ethereum to manage subnames",
+    },
   },
 } as const;

@@ -14,6 +14,7 @@ export interface SetupResolverProps {
   transactionHash?: string;
   isTransactionPending: boolean;
   isDialogOpen: boolean;
+  isConnected: boolean;
   handleOpenDialog: () => void;
   handleCloseDialog: () => void;
   handleConfirmUpdate: () => void;

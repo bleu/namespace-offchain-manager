@@ -5,6 +5,7 @@ export const SubnameList = ({
   subnames,
   onEdit,
   onDelete,
+  isAuthenticated,
 }: SubnameListProps) => {
   if (!subnames.length) {
     return (
@@ -22,6 +23,7 @@ export const SubnameList = ({
           subname={subname}
           onEdit={onEdit}
           onDelete={onDelete}
+          isAuthenticated={isAuthenticated}
         />
       ))}
     </div>

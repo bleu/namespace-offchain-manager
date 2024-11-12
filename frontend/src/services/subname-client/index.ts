@@ -15,7 +15,7 @@ const api = async (url: string, options?: RequestInit) => {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  
+
   if (response.status === 204) {
     return null;
   }

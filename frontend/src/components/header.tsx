@@ -58,7 +58,7 @@ export const CustomConnectButton = ({ className }: { className?: string }) => {
         if (!isAuthenticated) {
           return (
             <Button onClick={signIn} variant={"outline"} className={className}>
-              Sign In
+              Sign In With Ethereum
             </Button>
           );
         }
@@ -75,11 +75,6 @@ export const CustomConnectButton = ({ className }: { className?: string }) => {
 
 const Navigation = () => {
   const pathname = usePathname();
-  const { isAuthenticated } = useAuth();
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <nav className="flex items-center space-x-4">
@@ -110,7 +105,6 @@ export default function Header() {
     setSelectedEns,
     fetchEnsNames,
   } = useEnsStore();
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (isConnected && address && chainId) {
@@ -124,7 +118,7 @@ export default function Header() {
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Navigation />
         <div className="flex items-center space-x-4">
-          {isConnected && isAuthenticated ? (
+          {isConnected && (
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -172,9 +166,8 @@ export default function Header() {
                 </Command>
               </PopoverContent>
             </Popover>
-          ) : (
-            <CustomConnectButton />
           )}
+          <CustomConnectButton />
         </div>
       </div>
     </header>

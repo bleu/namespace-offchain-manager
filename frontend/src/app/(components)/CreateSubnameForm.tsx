@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { TOAST_MESSAGES } from "@/constants/toastMessages";
 import { cn } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
 import { ChevronDown, Plus, Search, X } from "lucide-react";
@@ -11,6 +13,7 @@ export const CreateSubnameForm = ({
   onSubmit,
   onCancel,
   isSubmitting,
+  isAuthenticated,
 }: CreateSubnameFormProps) => {
   const { ensNames, fetchEnsNames } = useEnsStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +25,7 @@ export const CreateSubnameForm = ({
     texts: subname?.texts || [{ key: "", value: "" }],
     addresses: subname?.addresses || [{ coin: 60, value: "" }],
   });
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchEnsNames();
@@ -71,6 +75,10 @@ export const CreateSubnameForm = ({
   };
 
   const handleAddText = () => {
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       texts: [...prev.texts, { key: "", value: "" }],
@@ -95,6 +103,10 @@ export const CreateSubnameForm = ({
   };
 
   const handleAddAddress = () => {
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
     setFormData((prev) => ({
       ...prev,
       addresses: [...prev.addresses, { coin: 60, value: "" }],
@@ -120,6 +132,10 @@ export const CreateSubnameForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
     const data = {
       ...formData,
       texts: formData.texts.filter((t) => t.key && t.value),
