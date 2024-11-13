@@ -25,6 +25,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { ChainSwitcher } from "./chainSwitcher";
 
 const LINKS = [
   {
@@ -169,6 +170,7 @@ export default function Header() {
                     </CommandGroup>
                   </CommandList>
                   <CommandSeparator />
+                  <ChainSwitcher />
                   <CustomConnectButton className="border-0" />
                 </Command>
               </PopoverContent>
