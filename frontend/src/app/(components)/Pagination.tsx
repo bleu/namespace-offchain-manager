@@ -15,22 +15,26 @@ export function Pagination({
   onPageChange,
   className,
 }: PaginationProps) {
+  const currentPage = pagination.page ?? 1;
+  const totalPages = pagination.totalPages ?? 1;
+  const hasMore = pagination.hasMore ?? false;
+
   return (
     <div className={cn("flex justify-between items-center mt-4", className)}>
       <div className="text-sm text-muted-foreground">
-        Showing page {pagination.page} of {pagination.totalPages}
+        Showing page {currentPage} of {totalPages}
       </div>
 
       <div className="flex gap-2">
         <Button
-          onClick={() => onPageChange(pagination.page - 1)}
-          disabled={pagination.page === 1 || isLoading}
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1 || isLoading}
         >
           Previous
         </Button>
         <Button
-          onClick={() => onPageChange(pagination.page + 1)}
-          disabled={!pagination.hasMore || isLoading}
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={!hasMore || isLoading}
         >
           Next
         </Button>

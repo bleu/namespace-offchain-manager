@@ -117,7 +117,7 @@ export const TransactionDialog = ({
           <Button
             onClick={onConfirm}
             className="w-full"
-            isLoading={isTransactionPending}
+            loading={isTransactionPending}
           >
             {isTransactionPending
               ? "Please confirm the transaction"

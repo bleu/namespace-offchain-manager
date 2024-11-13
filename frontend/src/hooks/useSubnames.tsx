@@ -25,7 +25,7 @@ export const useSubnames = () => {
 
   const names = useMemo(
     () =>
-      ensNames?.filter((name) => name.name != null).map((name) => name.name) ||
+      ensNames?.filter((name) => name.name != null).map((name) => name.name as string) ||
       [],
     [ensNames],
   );
@@ -143,11 +143,6 @@ export const useSubnames = () => {
       throw getErrorMessage(err);
     }
   };
-
-  const isPageLoading = useMemo(
-    () => isLoading || !shouldFetch,
-    [isLoading, shouldFetch],
-  );
 
   return {
     subnames: subnames?.data || [],
