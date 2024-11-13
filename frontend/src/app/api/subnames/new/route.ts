@@ -1,9 +1,9 @@
 import { SubnameService } from "@/services/subname-service";
 import type { CreateSubnameDTO } from "@/types/subname.types";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as CreateSubnameDTO;
     const subnameService = new SubnameService();
