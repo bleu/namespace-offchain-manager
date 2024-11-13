@@ -14,7 +14,7 @@ const Providers = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <SessionProvider>
+        <SessionProvider refetchOnWindowFocus={false} refetchInterval={5 * 60}>
           <ConnectKitProvider>{children}</ConnectKitProvider>
         </SessionProvider>
       </QueryClientProvider>
