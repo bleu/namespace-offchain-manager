@@ -103,7 +103,8 @@ const Navigation = () => {
 };
 
 export default function Header() {
-  const { isConnected, address, chainId } = useAccount();
+  const { isConnected, address, chainId, isConnecting } = useAccount();
+  const { isAuthenticated } = useAuth();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const {
     ensNames,
@@ -176,7 +177,9 @@ export default function Header() {
               </PopoverContent>
             </Popover>
           )}
-          <CustomConnectButton />
+          {!isAuthenticated && !isConnecting && !address && (
+            <CustomConnectButton />
+          )}
         </div>
       </div>
     </header>

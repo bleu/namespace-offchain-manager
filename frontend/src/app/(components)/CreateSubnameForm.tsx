@@ -34,7 +34,7 @@ export const CreateSubnameForm = ({
       label: subname?.label || "",
       texts: subname?.texts?.length ? subname.texts : [],
       addresses: subname?.addresses?.length ? subname.addresses : [],
-      subscriptionPackId: subname?.subscriptionPackId ?? "",
+      subscriptionPackId: subname?.subscriptionPack?.id ?? "",
     },
     mode: "onChange",
   });
