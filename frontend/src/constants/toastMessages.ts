@@ -1,6 +1,8 @@
 export type ToastType = "error" | "success";
 
-export type ActionType = keyof typeof TOAST_MESSAGES.success | keyof typeof TOAST_MESSAGES.error;
+export type ActionType =
+  | keyof typeof TOAST_MESSAGES.success
+  | keyof typeof TOAST_MESSAGES.error;
 
 export const TOAST_MESSAGES = {
   success: {
@@ -54,7 +56,13 @@ export const TOAST_MESSAGES = {
   },
 } as const;
 
-export type ToastMessage = {
-  title: string;
-  description: string;
-} | null | ((label: string, parentName: string) => { title: string; description: string });
+export type ToastMessage =
+  | {
+      title: string;
+      description: string;
+    }
+  | null
+  | ((
+      label: string,
+      parentName: string,
+    ) => { title: string; description: string });

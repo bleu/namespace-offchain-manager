@@ -1,14 +1,15 @@
 import { SubnameService } from "@/services/subname-service";
 import type { UpdateSubnameDTO } from "@/types/subname.types";
+import { NextResponse } from "next/server";
 import { ZodError } from "zod";
-import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const { id } = await params;
+
     const subnameService = new SubnameService();
 
     if (!id) {
@@ -24,17 +25,21 @@ export async function GET(
     return NextResponse.json(subname, { status: 200 });
   } catch (error) {
     console.error("Error fetching subname:", error);
-    return NextResponse.json({ error: "Error fetching subname" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error fetching subname" },
+      { status: 500 },
+    );
   }
 }
 
 export async function PUT(
-  request: NextRequest
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    const body = await request.json() as UpdateSubnameDTO;
+    const { id } = await params;
+
+    const body = (await request.json()) as UpdateSubnameDTO;
     const subnameService = new SubnameService();
 
     if (!id) {
@@ -46,19 +51,25 @@ export async function PUT(
     return NextResponse.json(subname, { status: 200 });
   } catch (error) {
     if (error instanceof ZodError) {
-      return NextResponse.json({ error: "Validation error", details: error.errors }, { status: 400 });
+      return NextResponse.json(
+        { error: "Validation error", details: error.errors },
+        { status: 400 },
+      );
     }
     console.error("Error updating subname:", error);
-    return NextResponse.json({ error: "Error updating subname" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error updating subname" },
+      { status: 500 },
+    );
   }
 }
 
 export async function DELETE(
-  request: NextRequest
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
+    const { id } = await params;
     const subnameService = new SubnameService();
 
     if (!id) {
@@ -67,13 +78,16 @@ export async function DELETE(
 
     await subnameService.deleteSubname(id);
 
-    return NextResponse.json(null, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     if (error instanceof Error && error.message === "Subname not found") {
       return NextResponse.json({ error: error.message }, { status: 404 });
     }
 
     console.error("Error deleting subname:", error);
-    return NextResponse.json({ error: "Error deleting subname" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error deleting subname" },
+      { status: 500 },
+    );
   }
 }

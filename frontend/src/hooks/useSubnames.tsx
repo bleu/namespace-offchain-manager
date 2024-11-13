@@ -25,8 +25,9 @@ export const useSubnames = () => {
 
   const names = useMemo(
     () =>
-      ensNames?.filter((name) => name.name != null).map((name) => name.name as string) ||
-      [],
+      ensNames
+        ?.filter((name) => name.name != null)
+        .map((name) => name.name as string) || [],
     [ensNames],
   );
 
