@@ -1,26 +1,60 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { TOAST_MESSAGES } from "@/constants/toastMessages";
 import { cn } from "@/lib/utils";
+import { createSubnameSchema } from "@/schemas/subname.schema";
 import { useEnsStore } from "@/states/useEnsStore";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronDown, Plus, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import type * as z from "zod";
 import type { CreateSubnameFormProps } from "../types";
+
+type FormValues = z.infer<typeof createSubnameSchema>;
 
 export const CreateSubnameForm = ({
   subname,
   onSubmit,
   onCancel,
   isSubmitting,
+  isAuthenticated,
 }: CreateSubnameFormProps) => {
   const { ensNames, fetchEnsNames } = useEnsStore();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [formData, setFormData] = useState({
-    parentName: subname?.parentName ?? "",
-    label: subname?.label || "",
-    texts: subname?.texts || [{ key: "", value: "" }],
-    addresses: subname?.addresses || [{ coin: 60, value: "" }],
+  const { toast } = useToast();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(createSubnameSchema),
+    defaultValues: {
+      parentName: subname?.parentName ?? "",
+      label: subname?.label || "",
+      texts: subname?.texts?.length ? subname.texts : [],
+      addresses: subname?.addresses?.length ? subname.addresses : [],
+      subscriptionPackId: subname?.subscriptionPack?.id ?? "",
+    },
+    mode: "onChange",
+  });
+
+  const {
+    fields: textFields,
+    append: appendText,
+    remove: removeText,
+  } = useFieldArray({
+    control: form.control,
+    name: "texts",
+  });
+
+  const {
+    fields: addressFields,
+    append: appendAddress,
+    remove: removeAddress,
+  } = useFieldArray({
+    control: form.control,
+    name: "addresses",
   });
 
   useEffect(() => {
@@ -46,91 +80,67 @@ export const CreateSubnameForm = ({
       ens.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     ) || [];
 
-  const handleEnsSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
   const handleEnsSelect = (ensName: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      parentName: ensName,
-    }));
+    form.setValue("parentName", ensName, { shouldValidate: true });
     setIsOpen(false);
     setSearchTerm("");
   };
 
-  const handleToggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      label: e.target.value.toLowerCase(),
-    }));
-  };
-
   const handleAddText = () => {
-    setFormData((prev) => ({
-      ...prev,
-      texts: [...prev.texts, { key: "", value: "" }],
-    }));
-  };
-
-  const handleTextKeyChange = (index: number, value: string) => {
-    const newTexts = [...formData.texts];
-    newTexts[index].key = value;
-    setFormData((prev) => ({ ...prev, texts: newTexts }));
-  };
-
-  const handleTextValueChange = (index: number, value: string) => {
-    const newTexts = [...formData.texts];
-    newTexts[index].value = value;
-    setFormData((prev) => ({ ...prev, texts: newTexts }));
-  };
-
-  const handleRemoveText = (index: number) => {
-    const newTexts = formData.texts.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, texts: newTexts }));
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
+    if (textFields.length >= 50) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Maximum 50 text records allowed",
+      });
+      return;
+    }
+    appendText({ key: "", value: "" });
   };
 
   const handleAddAddress = () => {
-    setFormData((prev) => ({
-      ...prev,
-      addresses: [...prev.addresses, { coin: 60, value: "" }],
-    }));
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
+    if (addressFields.length >= 20) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Maximum 20 address records allowed",
+      });
+      return;
+    }
+    appendAddress({ coin: 60, value: "" });
   };
 
-  const handleCoinTypeChange = (index: number, value: string) => {
-    const newAddresses = [...formData.addresses];
-    newAddresses[index].coin = Number.parseInt(value);
-    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-  };
+  const handleSubmit = async (values: FormValues) => {
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
 
-  const handleAddressValueChange = (index: number, value: string) => {
-    const newAddresses = [...formData.addresses];
-    newAddresses[index].value = value;
-    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-  };
-
-  const handleRemoveAddress = (index: number) => {
-    const newAddresses = formData.addresses.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, addresses: newAddresses }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const data = {
-      ...formData,
-      texts: formData.texts.filter((t) => t.key && t.value),
-      addresses: formData.addresses.filter((a) => a.value),
+    const filteredData = {
+      ...values,
+      texts: values.texts.filter((t) => t.key && t.value),
+      addresses: values.addresses.filter((a) => a.value),
     };
-    await onSubmit(data);
-    window.location.reload();
+
+    await onSubmit(filteredData);
   };
+
+  const isFormValid =
+    form.watch("parentName") &&
+    form.watch("label") &&
+    !form.formState.errors.parentName &&
+    !form.formState.errors.label;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-4">
         <div className="space-y-2">
           <label htmlFor="parentName" className="text-sm font-medium">
@@ -141,11 +151,11 @@ export const CreateSubnameForm = ({
               type="button"
               variant="outline"
               className="w-full justify-between"
-              onClick={handleToggleDropdown}
+              onClick={() => setIsOpen(!isOpen)}
               disabled={!!subname}
             >
               <span className="truncate">
-                {formData.parentName || "Select an ENS name..."}
+                {form.watch("parentName") || "Select an ENS name..."}
               </span>
               <ChevronDown
                 className={cn(
@@ -164,9 +174,8 @@ export const CreateSubnameForm = ({
                       type="text"
                       placeholder="Search ENS names..."
                       className="w-full pl-8 pr-4 py-2 bg-background border rounded-md text-sm"
-                      id="parentName"
                       value={searchTerm}
-                      onChange={handleEnsSearchChange}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </div>
@@ -193,30 +202,38 @@ export const CreateSubnameForm = ({
               </div>
             )}
           </div>
-          {formData.parentName && formData.label && (
-            <p className="text-sm text-muted-foreground">
-              Full name will be: {formData.label}.{formData.parentName}
+          {form.formState.errors.parentName && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.parentName.message}
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="subname" className="text-sm font-medium">
+          <label htmlFor="label" className="text-sm font-medium">
             Subname
           </label>
           <Input
-            id="subname"
+            {...form.register("label")}
             placeholder="Enter your desired subname"
-            value={formData.label}
-            onChange={handleLabelChange}
             disabled={!!subname}
+            onChange={(e) =>
+              form.setValue("label", e.target.value.toLowerCase(), {
+                shouldValidate: true,
+              })
+            }
           />
+          {form.formState.errors.label && (
+            <p className="text-sm text-destructive">
+              {form.formState.errors.label.message}
+            </p>
+          )}
         </div>
       </div>
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Texts</h3>
+          <h3 className="text-sm font-medium">Texts (Optional)</h3>
           <Button
             type="button"
             variant="outline"
@@ -228,23 +245,35 @@ export const CreateSubnameForm = ({
           </Button>
         </div>
 
-        {formData.texts.map((text, index) => (
-          <div key={index} className="flex gap-2">
-            <Input
-              placeholder="Key"
-              value={text.key}
-              onChange={(e) => handleTextKeyChange(index, e.target.value)}
-            />
-            <Input
-              placeholder="Value"
-              value={text.value}
-              onChange={(e) => handleTextValueChange(index, e.target.value)}
-            />
+        {textFields.map((field, index) => (
+          <div key={field.id} className="flex gap-2">
+            <div className="flex-1 space-y-1">
+              <Input
+                {...form.register(`texts.${index}.key`)}
+                placeholder="Key"
+              />
+              {form.formState.errors.texts?.[index]?.key && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.texts[index]?.key?.message}
+                </p>
+              )}
+            </div>
+            <div className="flex-1 space-y-1">
+              <Input
+                {...form.register(`texts.${index}.value`)}
+                placeholder="Value"
+              />
+              {form.formState.errors.texts?.[index]?.value && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.texts[index]?.value?.message}
+                </p>
+              )}
+            </div>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => handleRemoveText(index)}
+              onClick={() => removeText(index)}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -254,7 +283,7 @@ export const CreateSubnameForm = ({
 
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium">Addresses</h3>
+          <h3 className="text-sm font-medium">Addresses (Optional)</h3>
           <Button
             type="button"
             variant="outline"
@@ -266,30 +295,50 @@ export const CreateSubnameForm = ({
           </Button>
         </div>
 
-        {formData.addresses.map((address, index) => (
-          <div key={index} className="flex gap-2">
-            <Input
-              type="number"
-              placeholder="Coin Type"
-              value={address.coin}
-              onChange={(e) => handleCoinTypeChange(index, e.target.value)}
-            />
-            <Input
-              placeholder="Address"
-              value={address.value}
-              onChange={(e) => handleAddressValueChange(index, e.target.value)}
-            />
+        {addressFields.map((field, index) => (
+          <div key={field.id} className="flex gap-2">
+            <div className="w-1/3 space-y-1">
+              <Input
+                type="number"
+                {...form.register(`addresses.${index}.coin`, {
+                  valueAsNumber: true,
+                })}
+                placeholder="Coin Type"
+              />
+              {form.formState.errors.addresses?.[index]?.coin && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.addresses[index]?.coin?.message}
+                </p>
+              )}
+            </div>
+            <div className="flex-1 space-y-1">
+              <Input
+                {...form.register(`addresses.${index}.value`)}
+                placeholder="Address"
+              />
+              {form.formState.errors.addresses?.[index]?.value && (
+                <p className="text-xs text-destructive">
+                  {form.formState.errors.addresses[index]?.value?.message}
+                </p>
+              )}
+            </div>
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              onClick={() => handleRemoveAddress(index)}
+              onClick={() => removeAddress(index)}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
         ))}
       </div>
+
+      {form.watch("parentName") && form.watch("label") && (
+        <p className="text-sm text-muted-foreground">
+          Full name will be: {form.watch("label")}.{form.watch("parentName")}
+        </p>
+      )}
 
       <div className="flex justify-end gap-2">
         {onCancel && (
@@ -299,7 +348,7 @@ export const CreateSubnameForm = ({
         )}
         <Button
           type="submit"
-          disabled={isSubmitting || !formData.parentName || !formData.label}
+          disabled={isSubmitting || !isFormValid}
           loading={isSubmitting}
         >
           {subname ? "Update Subname" : "Create Subname"}

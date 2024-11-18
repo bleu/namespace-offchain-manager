@@ -21,11 +21,14 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
   transactionHash,
   isTransactionPending,
   isDialogOpen,
+  isConnected,
   handleCloseDialog,
   handleOpenDialog,
   handleConfirmUpdate,
 }) => {
   if (isLoading) return <Loading />;
+  if (!isConnected)
+    return <span>Please, connect to you wallet to setup the resolver</span>;
   return (
     <>
       <div className="w-full max-w-3xl mx-auto space-y-6">

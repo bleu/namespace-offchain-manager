@@ -1,8 +1,10 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
 import { useSubnames } from "@/hooks/useSubnames";
 import type { CreateSubnameDTO, UpdateSubnameDTO } from "@/types/subname.types";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 import { ManageSubnames } from "./(components)/ManageSubnames";
 
 export default function Page() {
@@ -10,6 +12,8 @@ export default function Page() {
     null,
   );
   const [activeTab, onTabChange] = useState("list");
+  const { isAuthenticated } = useAuth();
+  const { isConnected } = useAccount();
 
   const {
     subnames,
@@ -48,6 +52,8 @@ export default function Page() {
       isSubmitting={isSubmitting}
       pagination={pagination}
       activeTab={activeTab}
+      isConnected={isConnected}
+      isAuthenticated={isAuthenticated}
       onTabChange={onTabChange}
       onChangePage={onChangePage}
       onBack={handleBack}

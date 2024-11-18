@@ -1,22 +1,28 @@
 import { SubnameService } from "@/services/subname-service";
 import type { UpdateSubnameDTO } from "@/types/subname.types";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-interface RouteParams {
-  params: { id: string };
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
+
     const subnameService = new SubnameService();
-    const subname = await subnameService.getSubname(params.id);
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const subname = await subnameService.getSubname(id);
 
     if (!subname) {
       return NextResponse.json({ error: "Subname not found" }, { status: 404 });
     }
 
-    return NextResponse.json(subname);
+    return NextResponse.json(subname, { status: 200 });
   } catch (error) {
     console.error("Error fetching subname:", error);
     return NextResponse.json(
@@ -26,14 +32,23 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
+
     const body = (await request.json()) as UpdateSubnameDTO;
     const subnameService = new SubnameService();
 
-    const subname = await subnameService.updateSubname(params.id, body);
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
 
-    return NextResponse.json(subname);
+    const subname = await subnameService.updateSubname(id, body);
+
+    return NextResponse.json(subname, { status: 200 });
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(
@@ -41,11 +56,6 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 400 },
       );
     }
-
-    if (error instanceof Error && error.message === "Subname not found") {
-      return NextResponse.json({ error: error.message }, { status: 404 });
-    }
-
     console.error("Error updating subname:", error);
     return NextResponse.json(
       { error: "Error updating subname" },
@@ -54,10 +64,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
+    const { id } = await params;
     const subnameService = new SubnameService();
-    await subnameService.deleteSubname(params.id);
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    await subnameService.deleteSubname(id);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

@@ -15,6 +15,8 @@ export const ManageSubnames = ({
   isSubmitting,
   pagination,
   activeTab,
+  isConnected,
+  isAuthenticated,
   onTabChange,
   onChangePage,
   onBack,
@@ -24,6 +26,8 @@ export const ManageSubnames = ({
   onCreate,
 }: ManageSubnamesProps) => {
   if (isLoading) return <Loading />;
+  if (!isConnected)
+    return <span>Please, connect to you wallet to manage your subnames</span>;
 
   return (
     <div className="container mx-auto py-6">
@@ -56,6 +60,7 @@ export const ManageSubnames = ({
               }}
               onCancel={onBack}
               isSubmitting={isSubmitting}
+              isAuthenticated={isAuthenticated}
             />
           ) : (
             <Tabs value={activeTab} onValueChange={onTabChange}>
@@ -68,6 +73,7 @@ export const ManageSubnames = ({
                   subnames={subnames}
                   onEdit={onEdit}
                   onDelete={onDelete}
+                  isAuthenticated={isAuthenticated}
                 />
                 <Pagination
                   pagination={pagination}
@@ -79,6 +85,7 @@ export const ManageSubnames = ({
                 <CreateSubnameForm
                   onSubmit={onCreate}
                   isSubmitting={isSubmitting}
+                  isAuthenticated={isAuthenticated}
                 />
               </TabsContent>
             </Tabs>

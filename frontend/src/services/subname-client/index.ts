@@ -15,7 +15,7 @@ const api = async (url: string, options?: RequestInit) => {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  
+
   if (response.status === 204) {
     return null;
   }
@@ -24,10 +24,32 @@ const api = async (url: string, options?: RequestInit) => {
 
 export const subnameClient = {
   getAll: async (
+    isConnected: boolean,
     page = 1,
     pageSize = 10,
+    parentNames?: string[],
   ): Promise<PaginatedResponse<SubnameResponseDTO>> => {
-    return api(`/api/subnames?page=${page}&pageSize=${pageSize}`);
+    if (!isConnected) {
+      throw new Error("Please connect your wallet first");
+    }
+
+    if (!parentNames?.length) {
+      return {
+        data: [],
+        meta: {
+          total: 0,
+          page,
+          pageSize,
+          totalPages: 0,
+          hasMore: false,
+        },
+      };
+    }
+
+    const parentNamesParam = `parentNames=${parentNames.join(",")}`;
+    return api(
+      `/api/subnames?page=${page}&pageSize=${pageSize}&${parentNamesParam}`,
+    );
   },
 
   getById: async (id: string): Promise<SubnameResponseDTO> => {

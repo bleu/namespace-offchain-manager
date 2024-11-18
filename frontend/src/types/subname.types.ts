@@ -8,7 +8,6 @@ import type { z } from "zod";
 export type CreateSubnameDTO = z.infer<typeof createSubnameSchema>;
 export type UpdateSubnameDTO = z.infer<typeof updateSubnameSchema>;
 
-
 export interface PaginationMeta {
   page: number | undefined;
   pageSize: number | undefined;

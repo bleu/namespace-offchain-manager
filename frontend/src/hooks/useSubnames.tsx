@@ -5,19 +5,48 @@ import {
   type ToastType,
 } from "@/constants/toastMessages";
 import { subnameClient } from "@/services/subname-client";
+import { useEnsStore } from "@/states/useEnsStore";
 import type {
   CreateSubnameDTO,
   PaginatedResponse,
   SubnameResponseDTO,
   UpdateSubnameDTO,
 } from "@/types/subname.types";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
+import { useAccount } from "wagmi";
 
 export const useSubnames = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { ensNames } = useEnsStore();
   const { toast } = useToast();
+  const { isConnected } = useAccount();
+
+  const names = useMemo(
+    () =>
+      ensNames
+        ?.filter((name) => name.name != null)
+        .map((name) => name.name as string) || [],
+    [ensNames],
+  );
+
+  const shouldFetch = isConnected && names.length > 0;
+
+  const {
+    data: subnames,
+    error: subNamesError,
+    isLoading,
+    mutate,
+  } = useSWR<PaginatedResponse<SubnameResponseDTO>>(
+    shouldFetch ? ["subnames", names] : null,
+    () => subnameClient.getAll(isConnected, 1, 10, names),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      dedupingInterval: 5000,
+    },
+  );
 
   const getErrorMessage = (error: unknown): string => {
     if (error instanceof Error) {
@@ -39,55 +68,37 @@ export const useSubnames = () => {
 
       if (!message) return;
 
-      if (typeof message === "function" && data) {
-        toast({
-          variant: type === "error" ? "destructive" : "default",
-          ...message(data.label ?? "", data.parentName ?? ""),
-        });
-      } else if (typeof message === "object") {
-        toast({
-          variant: type === "error" ? "destructive" : "default",
-          ...message,
-        });
-      }
+      toast({
+        variant: type === "error" ? "destructive" : "default",
+        ...(typeof message === "function" && data
+          ? message(data.label ?? "", data.parentName ?? "")
+          : message),
+      });
     },
     [toast],
   );
 
-  const {
-    data: subnames,
-    error: subNamesError,
-    isLoading,
-    mutate,
-  } = useSWR<PaginatedResponse<SubnameResponseDTO>>(
-    "/api/subnames?page=1&pageSize=10",
-    () => subnameClient.getAll(),
-  );
+  const changePage = useCallback(
+    async (newPage: number) => {
+      if (!shouldFetch) return;
 
-  const changePage = async (newPage: number) => {
-    if (newPage >= 1 && newPage <= (subnames?.meta.totalPages || 0)) {
-      const response = await subnameClient.getAll(
-        newPage,
-        subnames?.meta.pageSize,
-      );
-      await mutate(
-        (prev: PaginatedResponse<SubnameResponseDTO> | undefined) => {
-          if (prev) {
-            return {
-              ...prev,
-              data: response.data,
-              meta: {
-                ...prev.meta,
-                page: newPage,
-              },
-            };
-          }
-          return prev;
-        },
-        false,
-      );
-    }
-  };
+      if (newPage >= 1 && newPage <= (subnames?.meta.totalPages || 0)) {
+        try {
+          const response = await subnameClient.getAll(
+            isConnected,
+            newPage,
+            subnames?.meta.pageSize || 10,
+            names,
+          );
+          await mutate(response, false);
+        } catch (error) {
+          console.error("Error changing page:", error);
+          showToast("error", "fetch");
+        }
+      }
+    },
+    [shouldFetch, isConnected, names, subnames?.meta, mutate, showToast],
+  );
 
   const createSubname = async (data: CreateSubnameDTO) => {
     try {

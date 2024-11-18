@@ -3,6 +3,7 @@
 import { config } from "@/lib/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider } from "connectkit";
+import { SessionProvider } from "next-auth/react";
 import { WagmiProvider } from "wagmi";
 import Header from "./header";
 import { Toaster } from "./ui/toaster";
@@ -13,7 +14,9 @@ const Providers = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider>{children}</ConnectKitProvider>
+        <SessionProvider refetchOnWindowFocus={false} refetchInterval={5 * 60}>
+          <ConnectKitProvider>{children}</ConnectKitProvider>
+        </SessionProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

@@ -16,14 +16,16 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "@/hooks/useAuth";
 import { cn, truncateAddress } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
-import { ConnectKitButton } from "connectkit";
+import { ConnectKitButton, useSIWE } from "connectkit";
 import { User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { ChainSwitcher } from "./chainSwitcher";
 
 const LINKS = [
   {
@@ -41,15 +43,39 @@ const LINKS = [
 ];
 
 export const CustomConnectButton = ({ className }: { className?: string }) => {
+  const { isAuthenticated, signIn, signOut } = useAuth();
+  const { isConnected } = useAccount();
+  const getButtonText = () => {
+    if (!isConnected) return "Connect Wallet";
+    if (isAuthenticated) return "Sign Out";
+    return "Sign-In with Ethereum";
+  };
+
+  const handleAuth = async () => {
+    if (!isConnected) {
+      // This will open the ConnectKit modal
+      return;
+    }
+    if (!isAuthenticated) {
+      await signIn();
+    } else {
+      await signOut();
+    }
+  };
+
   return (
     <ConnectKitButton.Custom>
-      {({ isConnected, show }) => {
-        return (
-          <Button onClick={show} variant={"outline"} className={className}>
-            {isConnected ? "Manage Connection" : "Connect Connect"}
-          </Button>
-        );
-      }}
+      {({ isConnecting, show }) => (
+        <Button
+          variant="outline"
+          onClick={isConnected ? handleAuth : show}
+          disabled={isConnecting}
+          className={className}
+          loading={isConnecting}
+        >
+          {getButtonText()}
+        </Button>
+      )}
     </ConnectKitButton.Custom>
   );
 };
@@ -76,7 +102,8 @@ const Navigation = () => {
 };
 
 export default function Header() {
-  const { isConnected, address, chainId } = useAccount();
+  const { isConnected, address, chainId, isConnecting } = useAccount();
+  const { isAuthenticated } = useAuth();
   const [popoverOpen, setPopoverOpen] = useState(false);
   const {
     ensNames,
@@ -93,13 +120,12 @@ export default function Header() {
       fetchEnsNames();
     }
   }, [isConnected, address, chainId, setAddress, fetchEnsNames]);
-
   return (
     <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Navigation />
         <div className="flex items-center space-x-4">
-          {isConnected ? (
+          {isConnected && (
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -143,11 +169,13 @@ export default function Header() {
                     </CommandGroup>
                   </CommandList>
                   <CommandSeparator />
+                  <ChainSwitcher />
                   <CustomConnectButton className="border-0" />
                 </Command>
               </PopoverContent>
             </Popover>
-          ) : (
+          )}
+          {(!isAuthenticated || !isConnected) && !isConnecting && (
             <CustomConnectButton />
           )}
         </div>

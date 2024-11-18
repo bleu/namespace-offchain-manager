@@ -1,18 +1,27 @@
 import { CopyableField } from "@/components/copyableField";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "@/components/ui/hooks/use-toast";
+import { TOAST_MESSAGES } from "@/constants/toastMessages";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import type { SubnameRowProps } from "../types";
 
-
-
-export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
+export const SubnameRow = ({
+  subname,
+  onEdit,
+  onDelete,
+  isAuthenticated,
+}: SubnameRowProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const handleDelete = async () => {
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
     if (window.confirm("Are you sure you want to delete this subname?")) {
       setIsDeleting(true);
       try {
@@ -21,6 +30,14 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
         setIsDeleting(false);
       }
     }
+  };
+
+  const handleOnEdit = (id: string) => {
+    if (!isAuthenticated) {
+      toast(TOAST_MESSAGES.error.authentication);
+      return;
+    }
+    onEdit(subname.id);
   };
 
   return (
@@ -96,7 +113,7 @@ export const SubnameRow = ({ subname, onEdit, onDelete }: SubnameRowProps) => {
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onEdit(subname.id);
+                  handleOnEdit(subname.id);
                 }}
               >
                 <Edit2 className="h-4 w-4 mr-2" />

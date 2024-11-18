@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import SetupResolver from "./(components)/SetupResolver";
 import { useEnsResolverSetup } from "./(hooks)/useResolverSetup";
 
@@ -20,6 +21,7 @@ const Page = () => {
     transactionHash,
   } = useEnsResolverSetup();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { isConnected } = useAccount();
 
   const handleOpenDialog = () => {
     setIsDialogOpen(true);
@@ -55,6 +57,7 @@ const Page = () => {
       currentResolver={currentResolver as string | null}
       setupComplete={setupComplete}
       isDialogOpen={isDialogOpen}
+      isConnected={isConnected}
       handleOpenDialog={handleOpenDialog}
       handleCloseDialog={handleCloseDialog}
       handleConfirmUpdate={handleConfirmUpdate}
