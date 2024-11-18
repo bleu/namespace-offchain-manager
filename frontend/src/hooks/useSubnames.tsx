@@ -4,7 +4,7 @@ import {
   TOAST_MESSAGES,
   type ToastType,
 } from "@/constants/toastMessages";
-import { subnameClient } from "@/services/subname-client";
+import { subnameClient } from "@/services/subname/subname-client";
 import { useEnsStore } from "@/states/useEnsStore";
 import type {
   CreateSubnameDTO,
