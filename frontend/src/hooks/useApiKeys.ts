@@ -48,6 +48,18 @@ export function useApiKeys() {
       toast(TOAST_MESSAGES.success.key);
     } catch (error) {
       toast(TOAST_MESSAGES.error.key);
+      throw error;
+    }
+  };
+
+  const deleteApiKey = async (id: string): Promise<void> => {
+    try {
+      await apiKeyClient.delete(id);
+      await mutate(API_KEYS_KEY);
+      toast(TOAST_MESSAGES.success.key);
+    } catch (error) {
+      toast(TOAST_MESSAGES.error.key);
+      throw error;
     }
   };
 
@@ -58,5 +70,6 @@ export function useApiKeys() {
     isSubmitting,
     createApiKey,
     revokeApiKey,
+    deleteApiKey,
   };
 }

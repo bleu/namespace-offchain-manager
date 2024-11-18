@@ -8,6 +8,7 @@ export interface ApiKey {
   name: string;
   createdAt: string;
   expiresAt: string | null;
+  isRevoked: boolean;
 }
 
 export interface ApiKeyResponse extends ApiKey {

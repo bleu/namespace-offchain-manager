@@ -37,6 +37,12 @@ export const apiKeyClient = {
 
   revoke: async (id: string): Promise<void> => {
     return api(`/api/keys/${id}`, {
+      method: "PUT",
+    });
+  },
+
+  delete: async (id: string): Promise<void> => {
+    return api(`/api/keys/${id}`, {
       method: "DELETE",
     });
   },

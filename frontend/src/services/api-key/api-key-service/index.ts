@@ -31,6 +31,7 @@ export class ApiKeyService {
       name: newApiKey.name,
       createdAt: newApiKey.createdAt,
       expiresAt: newApiKey.expiresAt,
+      isRevoked: newApiKey.isRevoked,
       apiKey,
     };
   }
@@ -39,13 +40,13 @@ export class ApiKeyService {
     const apiKeys = await prisma.apiKey.findMany({
       where: {
         ensOwner,
-        isRevoked: false,
       },
       select: {
         id: true,
         name: true,
         createdAt: true,
         expiresAt: true,
+        isRevoked: true,
       },
       orderBy: {
         createdAt: "desc",
@@ -71,6 +72,24 @@ export class ApiKeyService {
     await prisma.apiKey.update({
       where: { id },
       data: { isRevoked: true },
+    });
+  }
+
+  async deleteApiKey(id: string, ensOwner: string): Promise<void> {
+    const apiKey = await prisma.apiKey.findUnique({
+      where: { id },
+    });
+
+    if (!apiKey) {
+      throw new Error("API key not found");
+    }
+
+    if (apiKey.ensOwner !== ensOwner) {
+      throw new Error("Unauthorized");
+    }
+
+    await prisma.apiKey.delete({
+      where: { id },
     });
   }
 }

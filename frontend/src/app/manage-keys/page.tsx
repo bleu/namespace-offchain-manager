@@ -10,23 +10,36 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
 import { useApiKeys } from "@/hooks/useApiKeys";
 import { useAuth } from "@/hooks/useAuth";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Ban, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 
 export default function ManageKeysPage() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { isConnected } = useAccount();
-  const { apiKeys, isLoading, isError, isSubmitting, createApiKey, revokeApiKey } =
-    useApiKeys();
+  const {
+    apiKeys,
+    isLoading,
+    isError,
+    isSubmitting,
+    createApiKey,
+    revokeApiKey,
+    deleteApiKey,
+  } = useApiKeys();
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newKeyName, setNewKeyName] = useState("");
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
-  const [isRevoking, setIsRevoking] = useState<string | null>(null);
+  const [actionInProgress, setActionInProgress] = useState<string | null>(null);
 
   const handleCreateKey = async () => {
     if (!newKeyName.trim()) return;
@@ -44,12 +57,31 @@ export default function ManageKeysPage() {
   };
 
   const handleRevoke = async (id: string) => {
-    if (window.confirm("Are you sure you want to revoke this API key? This action cannot be undone.")) {
-      setIsRevoking(id);
+    if (
+      window.confirm(
+        "Are you sure you want to revoke this API key? This action cannot be undone.",
+      )
+    ) {
+      setActionInProgress(id);
       try {
         await revokeApiKey(id);
       } finally {
-        setIsRevoking(null);
+        setActionInProgress(null);
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (
+      window.confirm(
+        "Are you sure you want to permanently delete this API key? This action cannot be undone.",
+      )
+    ) {
+      setActionInProgress(id);
+      try {
+        await deleteApiKey(id);
+      } finally {
+        setActionInProgress(null);
       }
     }
   };
@@ -106,11 +138,21 @@ export default function ManageKeysPage() {
           ) : (
             <div className="space-y-4">
               {apiKeys.map((key) => (
-                <Card key={key.id}>
+                <Card
+                  key={key.id}
+                  className={key.isRevoked ? "opacity-75" : ""}
+                >
                   <CardContent className="pt-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-medium">{key.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-medium">{key.name}</h3>
+                          {key.isRevoked && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                              Revoked
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           Created:{" "}
                           {new Date(key.createdAt).toLocaleDateString()}
@@ -122,24 +164,55 @@ export default function ManageKeysPage() {
                             : "Never"}
                         </p>
                       </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleRevoke(key.id)}
-                        disabled={isRevoking === key.id}
-                      >
-                        {isRevoking === key.id ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Revoking...
-                          </>
-                        ) : (
-                          <>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Revoke
-                          </>
-                        )}
-                      </Button>
+                      {!key.isRevoked ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={actionInProgress === key.id}
+                            >
+                              {actionInProgress === key.id ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                "Actions"
+                              )}
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem
+                              onClick={() => handleRevoke(key.id)}
+                              className="text-orange-600"
+                            >
+                              <Ban className="h-4 w-4 mr-2" />
+                              Revoke
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => handleDelete(key.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDelete(key.id)}
+                          disabled={actionInProgress === key.id}
+                        >
+                          {actionInProgress === key.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Delete
+                            </>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
