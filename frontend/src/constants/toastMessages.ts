@@ -29,7 +29,15 @@ export const TOAST_MESSAGES = {
     },
     key: {
       title: "Success",
-      description: "Success creating API key",
+      description: "API key created successfully",
+    },
+    deleteKey: {
+      title: "Success",
+      description: "API key deleted successfully",
+    },
+    revoke: {
+      title: "Success",
+      description: "API key revoked successfully",
     },
   },
   error: {
@@ -60,6 +68,14 @@ export const TOAST_MESSAGES = {
     key: {
       title: "Error",
       description: "Failed to create API key",
+    },
+    deleteKey: {
+      title: "Error",
+      description: "Failed to delete API key",
+    },
+    revoke: {
+      title: "Error",
+      description: "Failed to revoke API key",
     },
   },
 } as const;

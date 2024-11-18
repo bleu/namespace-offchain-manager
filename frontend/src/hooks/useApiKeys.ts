@@ -45,9 +45,9 @@ export function useApiKeys() {
     try {
       await apiKeyClient.revoke(id);
       await mutate(API_KEYS_KEY);
-      toast(TOAST_MESSAGES.success.key);
+      toast(TOAST_MESSAGES.success.revoke);
     } catch (error) {
-      toast(TOAST_MESSAGES.error.key);
+      toast(TOAST_MESSAGES.error.revoke);
       throw error;
     }
   };
@@ -56,9 +56,9 @@ export function useApiKeys() {
     try {
       await apiKeyClient.delete(id);
       await mutate(API_KEYS_KEY);
-      toast(TOAST_MESSAGES.success.key);
+      toast(TOAST_MESSAGES.success.deleteKey);
     } catch (error) {
-      toast(TOAST_MESSAGES.error.key);
+      toast(TOAST_MESSAGES.error.deleteKey);
       throw error;
     }
   };
