@@ -45,7 +45,6 @@ const LINKS = [
 export const CustomConnectButton = ({ className }: { className?: string }) => {
   const { isAuthenticated, signIn, signOut } = useAuth();
   const { isConnected } = useAccount();
-
   const getButtonText = () => {
     if (!isConnected) return "Connect Wallet";
     if (isAuthenticated) return "Sign Out";
@@ -121,7 +120,6 @@ export default function Header() {
       fetchEnsNames();
     }
   }, [isConnected, address, chainId, setAddress, fetchEnsNames]);
-
   return (
     <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -177,7 +175,7 @@ export default function Header() {
               </PopoverContent>
             </Popover>
           )}
-          {!isAuthenticated && !isConnecting && !address && (
+          {(!isAuthenticated || !isConnected) && !isConnecting && (
             <CustomConnectButton />
           )}
         </div>
