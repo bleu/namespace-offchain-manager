@@ -25,6 +25,7 @@
     "clsx": "^2.1.1",
     "cmdk": "1.0.0",
     "connectkit": "^1.8.2",
+    "crypto": "^1.0.1",
     "ethers": "^6.13.4",
     "lucide-react": "^0.453.0",
     "next": "15.0.0-rc.1",

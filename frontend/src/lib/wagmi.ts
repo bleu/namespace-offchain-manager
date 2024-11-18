@@ -6,9 +6,9 @@ import { goerli, mainnet, sepolia } from "wagmi/chains";
 export const config = createConfig(
   getDefaultConfig({
     appName: "NamespaceOffchainManager",
-    chains: [addEnsContracts(sepolia)],
+    chains: [addEnsContracts(sepolia), addEnsContracts(mainnet)],
     transports: {
-      // [mainnet.id]: http(),
+      [mainnet.id]: http(),
       [sepolia.id]: fallback([
         http("https://rpc.ankr.com/eth_sepolia"),
         http("https://eth-sepolia.public.blastapi.io"),

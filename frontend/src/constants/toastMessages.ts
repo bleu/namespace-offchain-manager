@@ -27,6 +27,10 @@ export const TOAST_MESSAGES = {
       title: "Success",
       description: "Authentication successful",
     },
+    key: {
+      title: "Success",
+      description: "Success creating API key",
+    },
   },
   error: {
     fetch: {
@@ -52,6 +56,10 @@ export const TOAST_MESSAGES = {
     authentication: {
       title: "Error",
       description: "Please sign in with Ethereum to manage subnames",
+    },
+    key: {
+      title: "Error",
+      description: "Failed to create API key",
     },
   },
 } as const;
