@@ -82,7 +82,7 @@ model SubnameAddress {
   @@map("subname_addresses")
 }
 
-model ApiKey {
+model ApiToken {
   id            String      @id @default(cuid())
   name          String
   apiKeyDigest  String      @unique

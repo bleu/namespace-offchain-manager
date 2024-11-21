@@ -27,15 +27,15 @@ export const TOAST_MESSAGES = {
       title: "Success",
       description: "Authentication successful",
     },
-    key: {
+    apiKey: {
       title: "Success",
       description: "API key created successfully",
     },
-    deleteKey: {
+    deleteApiKey: {
       title: "Success",
       description: "API key deleted successfully",
     },
-    revoke: {
+    revokeApiKey: {
       title: "Success",
       description: "API key revoked successfully",
     },
@@ -65,15 +65,15 @@ export const TOAST_MESSAGES = {
       title: "Error",
       description: "Please sign in with Ethereum to manage subnames",
     },
-    key: {
+    apiKey: {
       title: "Error",
       description: "Failed to create API key",
     },
-    deleteKey: {
+    deleteApiKey: {
       title: "Error",
       description: "Failed to delete API key",
     },
-    revoke: {
+    revokeApiKey: {
       title: "Error",
       description: "Failed to revoke API key",
     },
