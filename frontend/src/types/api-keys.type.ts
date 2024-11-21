@@ -1,15 +1,8 @@
 import type { createApiKeySchema } from "@/schemas/api-key.schema";
+import type { ApiKey } from "@prisma/client";
 import type { z } from "zod";
 
 export type CreateApiKeyDTO = z.infer<typeof createApiKeySchema>;
-
-export interface ApiKey {
-  id: string;
-  name: string;
-  createdAt: string;
-  expiresAt: string | null;
-  isRevoked: boolean;
-}
 
 export interface ApiKeyResponse extends ApiKey {
   apiKey?: string;
@@ -20,4 +13,17 @@ export interface ApiKeyResponseDTO
   createdAt: Date;
   expiresAt: Date | null;
   apiKey?: string;
+}
+
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface PaginatedApiKeyResponse {
+  data: ApiKeyResponse[];
+  meta: PaginationMeta;
 }

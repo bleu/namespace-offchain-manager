@@ -1,5 +1,3 @@
-import { CopyableField } from "@/components/copyableField";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,10 +5,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import type { CreateKeyDialogProps } from "../types";
+import { ApiKeyDialogContent } from "./ApiKeyDialogContent";
+import { ApiKeyFooter } from "./ApiKeyFooter";
+import { NewApiKeyDialogContent } from "./NewApiKeyDialogContent";
 
 export function CreateKeyDialog({
   isOpen,
@@ -43,54 +42,23 @@ export function CreateKeyDialog({
           <DialogTitle>Create API Key</DialogTitle>
         </DialogHeader>
         {newApiKey ? (
-          <div className="space-y-4">
-            <div className="rounded-md bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-700">
-                Make sure to copy your API key now. You won't be able to see it
-                again!
-              </p>
-            </div>
-            <CopyableField
-              label="API Key"
-              value={newApiKey}
-              className="font-mono"
-            />
-            <DialogFooter>
-              <Button onClick={handleDone}>Done</Button>
-            </DialogFooter>
-          </div>
+          <NewApiKeyDialogContent
+            newApiKey={newApiKey}
+            handleDone={handleDone}
+          />
         ) : (
           <>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="keyName" className="text-sm font-medium">
-                  Key Name
-                </label>
-                <Input
-                  id="keyName"
-                  value={newKeyName}
-                  onChange={(e) => setNewKeyName(e.target.value)}
-                  placeholder="Enter a name for your API key"
-                />
-              </div>
-            </div>
+            <ApiKeyDialogContent
+              newKeyName={newKeyName}
+              onChangeKeyName={(e) => setNewKeyName(e.target.value)}
+            />
             <DialogFooter>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting || !newKeyName.trim()}
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  "Create"
-                )}
-              </Button>
+              <ApiKeyFooter
+                newKeyName={newKeyName}
+                isSubmitting={isSubmitting}
+                onOpenChange={onOpenChange}
+                handleSubmit={handleSubmit}
+              />
             </DialogFooter>
           </>
         )}

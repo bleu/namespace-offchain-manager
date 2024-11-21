@@ -122,7 +122,6 @@ export const useSubnames = () => {
     try {
       setIsUpdating(true);
       const result = await subnameClient.update(id, data);
-      console.log(result, "result");
       await mutate();
       showToast("success", "update");
       return result;

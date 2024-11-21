@@ -1,5 +1,6 @@
 "use client";
 
+import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
@@ -16,11 +17,14 @@ export default function ManageKeysPage() {
   const { isConnected } = useAccount();
   const {
     apiKeys,
+    meta,
     isLoading,
     isSubmitting,
     createApiKey,
     revokeApiKey,
     deleteApiKey,
+    handlePageChange,
+    handlePageSizeChange,
   } = useApiKeys();
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
@@ -61,6 +65,18 @@ export default function ManageKeysPage() {
             onRevoke={revokeApiKey}
             onDelete={deleteApiKey}
           />
+
+          {meta && apiKeys.length > 0 && (
+            <div className="flex justify-between items-center gap-4">
+              <Pagination
+                meta={meta}
+                onPageChange={handlePageChange}
+                onPageSizeChange={handlePageSizeChange}
+                isLoading={isLoading}
+                showPageSize={true}
+              />
+            </div>
+          )}
         </CardContent>
       </Card>
 

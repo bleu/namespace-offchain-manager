@@ -1,55 +1,39 @@
-import { authOptions } from "@/lib/auth";
+import { handleApiError } from "@/lib/api/response";
 import { ApiKeyService } from "@/services/api-key/api-key-service";
 import type { CreateApiKeyDTO } from "@/types/api-keys.type";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
-import { z } from "zod";
+import { getToken } from "next-auth/jwt";
+import { type NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.address) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const url = new URL(request.url);
+    const page = Number(url.searchParams.get("page")) || 1;
+    const pageSize = Number(url.searchParams.get("pageSize")) || 10;
+    const token = await getToken({ req: request });
 
-    const body = (await request.json()) as CreateApiKeyDTO;
     const apiKeyService = new ApiKeyService();
-
-    const apiKey = await apiKeyService.createApiKey(body, session.user.address);
-
-    return NextResponse.json(apiKey);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Validation error", details: error.errors },
-        { status: 400 },
-      );
-    }
-
-    console.error("Error creating API key:", error);
-    return NextResponse.json(
-      { error: "Error creating API key" },
-      { status: 500 },
+    const apiKeys = await apiKeyService.getAllApiKeys(
+      token?.address,
+      page,
+      pageSize,
     );
-  }
-}
-
-export async function GET() {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.address) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const apiKeyService = new ApiKeyService();
-    const apiKeys = await apiKeyService.getAllApiKeys(session.user.address);
 
     return NextResponse.json(apiKeys);
   } catch (error) {
-    console.error("Error fetching API keys:", error);
-    return NextResponse.json(
-      { error: "Error fetching API keys" },
-      { status: 500 },
-    );
+    return handleApiError(error);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = (await request.json()) as CreateApiKeyDTO;
+    const token = await getToken({ req: request });
+
+    const apiKeyService = new ApiKeyService();
+    const apiKey = await apiKeyService.createApiKey(body, token?.address);
+
+    return NextResponse.json(apiKey);
+  } catch (error) {
+    return handleApiError(error);
   }
 }

@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
@@ -5,7 +6,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tab";
 import { ArrowLeft } from "lucide-react";
 import type { ManageSubnamesProps } from "../types";
 import { CreateSubnameForm } from "./CreateSubnameForm";
-import { Pagination } from "./Pagination";
 import { SubnameList } from "./SubnameList";
 
 export const ManageSubnames = ({
@@ -75,11 +75,14 @@ export const ManageSubnames = ({
                   onDelete={onDelete}
                   isAuthenticated={isAuthenticated}
                 />
-                <Pagination
-                  pagination={pagination}
-                  isLoading={isLoading}
-                  onPageChange={onChangePage}
-                />
+                {pagination && subnames.length > 0 && (
+                  <Pagination
+                    meta={pagination}
+                    onPageChange={onChangePage}
+                    isLoading={isLoading}
+                    showPageSize={false}
+                  />
+                )}
               </TabsContent>
               <TabsContent value="create" className="mt-6">
                 <CreateSubnameForm
