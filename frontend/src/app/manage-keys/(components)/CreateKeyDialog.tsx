@@ -37,7 +37,12 @@ export function CreateKeyDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent
+        hideCloseButton
+        onInteractOutside={(e) => {
+          e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Create API Key</DialogTitle>
         </DialogHeader>
