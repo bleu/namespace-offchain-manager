@@ -4,7 +4,7 @@ import {
   TOAST_MESSAGES,
   type ToastType,
 } from "@/constants/toastMessages";
-import { subnameClient } from "@/services/subname-client";
+import { subnameClient } from "@/services/subname/subname-client";
 import { useEnsStore } from "@/states/useEnsStore";
 import type {
   CreateSubnameDTO,
@@ -122,7 +122,6 @@ export const useSubnames = () => {
     try {
       setIsUpdating(true);
       const result = await subnameClient.update(id, data);
-      console.log(result, "result");
       await mutate();
       showToast("success", "update");
       return result;
@@ -146,17 +145,11 @@ export const useSubnames = () => {
   };
 
   return {
-    subnames: subnames?.data || [],
+    subnames: subnames?.data ?? [],
+    meta: subnames?.meta,
     isLoading,
     error: subNamesError,
     isSubmitting: isCreating || isUpdating,
-    pagination: {
-      page: subnames?.meta.page,
-      pageSize: subnames?.meta.pageSize,
-      total: subnames?.meta.total,
-      totalPages: subnames?.meta.totalPages,
-      hasMore: subnames?.meta.hasMore,
-    },
     onChangePage: changePage,
     createSubname,
     updateSubname,

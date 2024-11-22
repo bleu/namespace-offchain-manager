@@ -139,6 +139,14 @@ export const CreateSubnameForm = ({
     !form.formState.errors.parentName &&
     !form.formState.errors.label;
 
+  if (!isAuthenticated) {
+    return (
+      <div className="text-center mt-8">
+        Please sign in with Ethereum to create a subname.
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 gap-4">

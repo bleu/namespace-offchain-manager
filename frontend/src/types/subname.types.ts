@@ -9,11 +9,11 @@ export type CreateSubnameDTO = z.infer<typeof createSubnameSchema>;
 export type UpdateSubnameDTO = z.infer<typeof updateSubnameSchema>;
 
 export interface PaginationMeta {
-  page: number | undefined;
-  pageSize: number | undefined;
-  total: number | undefined;
-  totalPages: number | undefined;
-  hasMore: boolean | undefined;
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
 }
 export interface PaginatedResponse<T> {
   data: T[];
