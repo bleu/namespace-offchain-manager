@@ -145,17 +145,11 @@ export const useSubnames = () => {
   };
 
   return {
-    subnames: subnames?.data || [],
+    subnames: subnames?.data ?? [],
+    meta: subnames?.meta,
     isLoading,
     error: subNamesError,
     isSubmitting: isCreating || isUpdating,
-    pagination: {
-      page: subnames?.meta.page,
-      pageSize: subnames?.meta.pageSize,
-      total: subnames?.meta.total,
-      totalPages: subnames?.meta.totalPages,
-      hasMore: subnames?.meta.hasMore,
-    },
     onChangePage: changePage,
     createSubname,
     updateSubname,

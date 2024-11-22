@@ -29,7 +29,7 @@ export default function Page() {
     createSubname,
     deleteSubname,
     updateSubname,
-    pagination,
+    meta,
     onChangePage,
   } = useSubnames();
 
@@ -73,7 +73,7 @@ export default function Page() {
               <div className="flex items-center justify-between w-full">
                 <CardTitle>Manage Subnames</CardTitle>
                 <span className="text-sm font-medium text-muted-foreground bg-muted px-2.5 py-0.5 rounded-full">
-                  {pagination.total} subname{pagination.total !== 1 ? "s" : ""}
+                  {meta?.total} subname{meta?.total !== 1 ? "s" : ""}
                 </span>
               </div>
             )}
@@ -101,9 +101,9 @@ export default function Page() {
                   onDelete={deleteSubname}
                   isAuthenticated={isAuthenticated}
                 />
-                {pagination && subnames.length > 0 && (
+                {meta && subnames.length > 0 && (
                   <Pagination
-                    meta={pagination}
+                    meta={meta}
                     onPageChange={onChangePage}
                     isLoading={isLoading}
                     showPageSize={true}

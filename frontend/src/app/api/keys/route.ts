@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
     const apiKeyService = new ApiKeyService();
     const apiKeys = await apiKeyService.getAllApiKeys(
-      token?.address,
+      token?.address || "",
       page,
       pageSize,
     );
@@ -31,7 +31,7 @@ export const POST = withAuth(async (request: NextRequest) => {
     const token = await getToken({ req: request });
 
     const apiKeyService = new ApiKeyService();
-    const apiKey = await apiKeyService.createApiKey(body, token?.address);
+    const apiKey = await apiKeyService.createApiKey(body, token?.address || "");
 
     return NextResponse.json(apiKey);
   } catch (error) {

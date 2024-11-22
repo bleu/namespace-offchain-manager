@@ -1,4 +1,5 @@
-import type { ApiKey, ApiKeyResponse } from "@/types/api-keys.type";
+import type { ApiKeyResponse } from "@/types/api-keys.type";
+import type { ApiKey } from "@prisma/client";
 
 export interface ManageKeysProps {
   isLoading: boolean;
