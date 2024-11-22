@@ -26,8 +26,13 @@ const getEnsUserFromApiToken = async (token: string) => {
     },
     select: {
       ensOwner: true,
+      isRevoked: true,
     },
   });
+
+  if (api_token?.isRevoked) {
+    return null;
+  }
 
   return api_token?.ensOwner;
 };
@@ -40,18 +45,25 @@ export function withAuth(handler: RouteHandler): RouteHandler {
     if (!ensOwner) {
       const token = getBearerToken(req);
       if (token) {
-        ensOwner = await getEnsUserFromApiToken(token);
+        const ensUser = await getEnsUserFromApiToken(token);
+        if (ensUser) {
+          ensOwner = ensUser;
+        }
       }
     }
 
     if (!ensOwner) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized - Invalid or revoked token" },
+        { status: 401 }
+      );
     }
 
     req.headers.set("ensOwner", ensOwner);
     return handler(req, context);
   };
 }
+
 declare module "next/server" {
   interface NextRequest {
     address?: string;
