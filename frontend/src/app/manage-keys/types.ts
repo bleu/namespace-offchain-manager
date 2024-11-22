@@ -1,9 +1,9 @@
 import type { ApiKeyResponse } from "@/types/api-keys.type";
-import type { ApiKey } from "@prisma/client";
+import type { ApiToken } from "@prisma/client";
 
 export interface ManageKeysProps {
   isLoading: boolean;
-  apiKeys: ApiKey[];
+  apiKeys: ApiToken[];
   isSubmitting: boolean;
   isConnected: boolean;
   isAuthenticated: boolean;
@@ -15,13 +15,13 @@ export interface ManageKeysProps {
 }
 
 export interface KeysListProps {
-  keys: ApiKey[];
+  keys: ApiToken[];
   onRevoke: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
 export interface KeyRowProps {
-  apiKey: ApiKey;
+  apiKey: ApiToken;
   onRevoke: (id: string) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }

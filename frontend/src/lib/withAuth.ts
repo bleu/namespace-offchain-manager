@@ -44,7 +44,7 @@ export function withAuth(handler: RouteHandler): RouteHandler {
       try {
         const apiKeyDigest = await createHash(bearerToken);
 
-        const apiKey = await prisma.apiKey.findUnique({
+        const apiKey = await prisma.apiToken.findUnique({
           where: {
             apiKeyDigest: apiKeyDigest,
             isRevoked: false,

@@ -17,11 +17,11 @@ export class ApiKeyService {
     ensOwner: string,
   ): Promise<ApiKeyResponseDTO> {
     const validatedData = await this.validateCreateApiKey(data);
-
     const apiKey = `nsoma_${randomBytes(32).toString("hex")}`;
+
     const apiKeyDigest = createHash("sha256").update(apiKey).digest("hex");
 
-    const newApiKey = await prisma.apiKey.create({
+    const newApiKey = await prisma.apiToken.create({
       data: {
         name: validatedData.name,
         apiKeyDigest,
@@ -48,14 +48,14 @@ export class ApiKeyService {
     page = 1,
     pageSize = 10,
   ): Promise<PaginatedApiKeyResponse> {
-    const total = await prisma.apiKey.count({
+    const total = await prisma.apiToken.count({
       where: { ensOwner },
     });
 
     const totalPages = Math.ceil(total / pageSize);
     const skip = (page - 1) * pageSize;
 
-    const apiKeys = await prisma.apiKey.findMany({
+    const apiKeys = await prisma.apiToken.findMany({
       where: { ensOwner },
       select: {
         id: true,
@@ -87,7 +87,7 @@ export class ApiKeyService {
   }
 
   async revokeApiKey(id: string): Promise<void> {
-    const apiKey = await prisma.apiKey.findUnique({
+    const apiKey = await prisma.apiToken.findUnique({
       where: { id },
     });
 
@@ -95,14 +95,14 @@ export class ApiKeyService {
       throw new Error("API key not found");
     }
 
-    await prisma.apiKey.update({
+    await prisma.apiToken.update({
       where: { id },
       data: { isRevoked: true },
     });
   }
 
   async deleteApiKey(id: string): Promise<void> {
-    const apiKey = await prisma.apiKey.findUnique({
+    const apiKey = await prisma.apiToken.findUnique({
       where: { id },
     });
 
@@ -110,7 +110,7 @@ export class ApiKeyService {
       throw new Error("API key not found");
     }
 
-    await prisma.apiKey.delete({
+    await prisma.apiToken.delete({
       where: { id },
     });
   }
