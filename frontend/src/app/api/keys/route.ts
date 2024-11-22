@@ -1,4 +1,5 @@
 import { handleApiError } from "@/lib/api/response";
+import { withAuth } from "@/lib/withAuth";
 import { ApiKeyService } from "@/services/api-key/api-key-service";
 import type { CreateApiKeyDTO } from "@/types/api-keys.type";
 import { getToken } from "next-auth/jwt";
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = (await request.json()) as CreateApiKeyDTO;
     const token = await getToken({ req: request });
@@ -36,4 +37,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return handleApiError(error);
   }
-}
+});

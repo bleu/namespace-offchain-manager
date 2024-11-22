@@ -1,9 +1,10 @@
+import { withAuth } from "@/lib/withAuth";
 import { SubnameService } from "@/services/subname/subname-service";
 import type { CreateSubnameDTO } from "@/types/subname.types";
 import { type NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = (await request.json()) as CreateSubnameDTO;
     const subnameService = new SubnameService();
@@ -45,4 +46,4 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
-}
+});
