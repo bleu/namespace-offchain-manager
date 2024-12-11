@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { Button } from "./ui/button";
+import { useToast } from "./ui/hooks/use-toast";
 
 interface CopyableFieldProps {
   label: string;
@@ -15,8 +16,11 @@ export const CopyableField = ({
   className = "",
   helpText,
 }: CopyableFieldProps) => {
+  const { toast } = useToast();
+
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
+    toast({ title: "Success", description: "Copied to clipboard" });
   };
 
   return (

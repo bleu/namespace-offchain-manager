@@ -40,6 +40,10 @@ const LINKS = [
     href: "/setup-resolver",
     text: "Setup Resolver",
   },
+  {
+    href: "/manage-keys",
+    text: "API Keys",
+  },
 ];
 
 export const CustomConnectButton = ({ className }: { className?: string }) => {
