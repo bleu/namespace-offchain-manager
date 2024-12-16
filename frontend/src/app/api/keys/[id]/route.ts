@@ -1,7 +1,7 @@
 import { handleApiError } from "@/lib/api/response";
 import { withAuth } from "@/lib/withAuth";
-import { ApiKeyService } from "@/services/api-key/api-key-service";
-import { type NextRequest, NextResponse } from "next/server";
+import { ApiKeyService } from "@/services/api-key";
+import { NextResponse } from "next/server";
 
 export const PUT = withAuth(
   async (request: Request, { params }: { params: Promise<{ id: string }> }) => {
@@ -15,7 +15,7 @@ export const PUT = withAuth(
     } catch (error) {
       return handleApiError(error);
     }
-  },
+  }
 );
 
 export const DELETE = withAuth(
@@ -30,5 +30,5 @@ export const DELETE = withAuth(
     } catch (error) {
       return handleApiError(error);
     }
-  },
+  }
 );

@@ -16,5 +16,5 @@ export const config = createConfig(
       [goerli.id]: http(),
     },
     walletConnectProjectId: "ABXC",
-  }),
+  })
 );

@@ -1,6 +1,6 @@
 import { handleApiError } from "@/lib/api/response";
 import { withAuth } from "@/lib/withAuth";
-import { ApiKeyService } from "@/services/api-key/api-key-service";
+import { ApiKeyService } from "@/services/api-key";
 import type { CreateApiKeyDTO } from "@/types/api-keys.type";
 import { type NextRequest, NextResponse } from "next/server";
 
