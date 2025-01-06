@@ -3,8 +3,8 @@ import type { ClientWithEns } from "@ensdomains/ensjs/contracts";
 import type { GetNamesForAddressReturnType } from "@ensdomains/ensjs/subgraph";
 import { getNamesForAddress } from "@ensdomains/ensjs/subgraph";
 import { getEnsAvatar } from "@wagmi/core";
-import { create } from "zustand";
 import { normalize } from "viem/ens";
+import { create } from "zustand";
 
 interface EnsState {
   address: string | null;

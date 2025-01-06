@@ -7,7 +7,7 @@ export const subnameTextSchema = z.object({
     .max(50, "Key must be less than 50 characters")
     .regex(
       /^[a-zA-Z0-9._-]+$/,
-      "Key can only contain letters, numbers, dots, underscores, and hyphens"
+      "Key can only contain letters, numbers, dots, underscores, and hyphens",
     ),
   value: z
     .string()
@@ -39,11 +39,11 @@ export const createSubnameSchema = z.object({
     .max(63, "Label must be less than 63 characters")
     .regex(
       /^[a-z0-9-]+$/,
-      "Label can only contain lowercase letters, numbers, and hyphens"
+      "Label can only contain lowercase letters, numbers, and hyphens",
     )
     .regex(
       /^[a-z0-9].*[a-z0-9]$/,
-      "Label must start and end with a letter or number"
+      "Label must start and end with a letter or number",
     ),
   contenthash: z
     .string()

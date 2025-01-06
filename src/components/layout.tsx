@@ -4,10 +4,10 @@ import { config } from "@/lib/wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider } from "connectkit";
 import { SessionProvider } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { WagmiProvider } from "wagmi";
 import Header from "./header";
 import { Toaster } from "./ui/toaster";
-import { usePathname } from "next/navigation";
 
 export const queryClient = new QueryClient();
 

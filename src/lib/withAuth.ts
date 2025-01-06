@@ -55,7 +55,7 @@ export function withAuth(handler: RouteHandler): RouteHandler {
     if (!ensOwner) {
       return NextResponse.json(
         { error: "Unauthorized - Invalid or revoked token" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 

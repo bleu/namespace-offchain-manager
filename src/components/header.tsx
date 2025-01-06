@@ -82,7 +82,7 @@ const Navigation = () => {
           href={href}
           className={cn(
             "text-foreground hover:text-primary transition-colors",
-            pathname === href ? "border-b-2" : "border-0"
+            pathname === href ? "border-b-2" : "border-0",
           )}
         >
           {text}

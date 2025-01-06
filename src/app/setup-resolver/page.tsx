@@ -42,6 +42,7 @@ const Page = () => {
     handleSubmit();
   };
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     // Close dialog when selectedEns changes
     setIsDialogOpen(false);

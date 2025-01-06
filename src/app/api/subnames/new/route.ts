@@ -33,7 +33,7 @@ export const POST = withAuth(async (request: NextRequest) => {
             message: e.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,7 +44,7 @@ export const POST = withAuth(async (request: NextRequest) => {
     console.error("Error creating subname:", error);
     return NextResponse.json(
       { error: "Error creating subname" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 });

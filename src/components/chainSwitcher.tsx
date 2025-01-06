@@ -60,7 +60,7 @@ export function ChainSwitcher() {
             key={supportedChain.id}
             className={cn(
               "flex items-center gap-2 cursor-pointer",
-              chainId === supportedChain.id && "bg-accent"
+              chainId === supportedChain.id && "bg-accent",
             )}
             disabled={chainId === supportedChain.id || isPending}
             onClick={() => switchChain({ chainId: supportedChain.id })}

@@ -2,21 +2,22 @@ import { CopyableField } from "@/components/copyableField";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Loading } from "@/components/ui/loading";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/statusBadge";
 import { NAMESPACE_RESOLVER_ADDRESS } from "@/constants/constants";
 import { cn } from "@/lib/utils";
 import { AlertTriangle, Check } from "lucide-react";
 import type { SetupResolverProps } from "../types";
 import { TransactionDialog } from "./TransactionDialog";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  SelectContent,
-  SelectGroup,
-  SelectLabel,
-} from "@/components/ui/select";
+import type { NameWithRelation } from "@ensdomains/ensjs/subgraph";
 
 const SetupResolver: React.FC<SetupResolverProps> = ({
   error,
@@ -74,7 +75,11 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
           <div className="space-y-4">
             <Select
               onValueChange={(value) =>
-                setSelectedEns(ensNames?.find((ens) => ens.name === value))
+                setSelectedEns(
+                  ensNames?.find(
+                    (ens) => ens.name === value
+                  ) as NameWithRelation
+                )
               }
               defaultValue={selectedEns?.name as string}
             >

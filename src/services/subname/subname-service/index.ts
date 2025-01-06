@@ -80,7 +80,7 @@ export class SubnameService {
   async getAllSubnames(
     page = 1,
     pageSize = 10,
-    parentNames?: string[]
+    parentNames?: string[],
   ): Promise<PaginatedResponse<SubnameResponseDTO>> {
     if (!parentNames?.length) {
       return {
@@ -153,7 +153,7 @@ export class SubnameService {
 
   async getSubnameFromOnwer(
     id: string,
-    ensOwner: string
+    ensOwner: string,
   ): Promise<SubnameResponseDTO | null> {
     const subname = await prisma.subname.findUnique({
       where: { id, ensOwner },
@@ -172,7 +172,7 @@ export class SubnameService {
   async updateSubname(
     id: string,
     data: UpdateSubnameDTO,
-    ensOwner: string
+    ensOwner: string,
   ): Promise<SubnameResponseDTO> {
     const validatedData = await this.validateUpdateSubname(data);
 

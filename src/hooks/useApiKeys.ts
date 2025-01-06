@@ -30,7 +30,7 @@ export function useApiKeys(initialPage = 1, initialPageSize = 10) {
     {
       revalidateOnFocus: false,
       dedupingInterval: 2000,
-    }
+    },
   );
 
   const createApiKey = async (name: string): Promise<ApiKeyResponse | null> => {

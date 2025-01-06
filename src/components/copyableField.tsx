@@ -35,7 +35,7 @@ export const CopyableField = ({
           <div
             className={cn(
               className,
-              "bg-muted p-3 rounded-lg font-mono text-sm break-all"
+              "bg-muted p-3 rounded-lg font-mono text-sm break-all",
             )}
           >
             {value}

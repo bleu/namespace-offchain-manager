@@ -3,6 +3,7 @@ import {
   ENS_REGISTRY_ADDRESS,
   NAMESPACE_RESOLVER_ADDRESS,
 } from "@/constants/constants";
+import { config } from "@/lib/wagmi";
 import { useEnsStore } from "@/states/useEnsStore";
 import { useEffect, useMemo, useState } from "react";
 import { namehash, normalize } from "viem/ens";
@@ -14,7 +15,6 @@ import {
   useWriteContract,
 } from "wagmi";
 import { goerli, mainnet, sepolia } from "wagmi/chains";
-import { config } from "@/lib/wagmi";
 
 export const useEnsResolverSetup = () => {
   const chainId = useChainId();
@@ -71,7 +71,7 @@ export const useEnsResolverSetup = () => {
       chainId !== sepolia.id
     ) {
       setError(
-        "Unsupported chain, please connected to mainnet, goerli or sepolia"
+        "Unsupported chain, please connected to mainnet, goerli or sepolia",
       );
       return;
     }
@@ -87,7 +87,7 @@ export const useEnsResolverSetup = () => {
     } catch (error) {
       console.error("Error setting resolver:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to set resolver"
+        error instanceof Error ? error.message : "Failed to set resolver",
       );
     }
   };

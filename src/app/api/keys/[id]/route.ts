@@ -15,7 +15,7 @@ export const PUT = withAuth(
     } catch (error) {
       return handleApiError(error);
     }
-  }
+  },
 );
 
 export const DELETE = withAuth(
@@ -30,5 +30,5 @@ export const DELETE = withAuth(
     } catch (error) {
       return handleApiError(error);
     }
-  }
+  },
 );

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
     const subnames = await subnameService.getAllSubnames(
       page,
       pageSize,
-      parentNames
+      parentNames,
     );
 
     return NextResponse.json(subnames);
@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     console.error("Error fetching subnames:", error);
     return NextResponse.json(
       { error: "Error fetching subnames" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

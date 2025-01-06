@@ -76,7 +76,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {loadingText}
           </>
         ) : (
-          props.children
+          (props.children as React.ReactNode)
         )}
       </Comp>
     );
