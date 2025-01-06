@@ -2,21 +2,21 @@ import { config } from "@/lib/wagmi";
 import type { ClientWithEns } from "@ensdomains/ensjs/contracts";
 import type { GetNamesForAddressReturnType } from "@ensdomains/ensjs/subgraph";
 import { getNamesForAddress } from "@ensdomains/ensjs/subgraph";
-import { getEnsAvatar, getEnsName } from "@wagmi/core";
-import { normalize } from "viem/ens";
+import { getEnsAvatar } from "@wagmi/core";
 import { create } from "zustand";
+import { normalize } from "viem/ens";
 
 interface EnsState {
   address: string | null;
   chainId: number | undefined;
   ensNames: GetNamesForAddressReturnType | null;
   selectedEns: GetNamesForAddressReturnType[0] | undefined;
+  setSelectedEns: (ens: GetNamesForAddressReturnType[0]) => Promise<void>;
   avatar: string | null;
 }
 
 interface EnsActions {
   setAddress: (address: string, chainId: number) => void;
-  setSelectedEns: (ens: GetNamesForAddressReturnType[0]) => Promise<void>;
   fetchEnsNames: () => Promise<void>;
 }
 
@@ -58,21 +58,34 @@ export const useEnsStore = create<EnsState & EnsActions>((set, get) => ({
         const names = await getNamesForAddress(client, {
           address: address as `0x${string}`,
         });
-        const primaryEnsName = await getEnsName(config, {
-          address: address as `0x${string}`,
-          chainId,
-        });
 
-        const selectedEns =
-          names.find((ens) => ens.name === primaryEnsName) || names[0];
+        if (!names.length) {
+          set({ ensNames: null, selectedEns: undefined });
+          return;
+        }
+
+        const selectedEns = names[0];
+        const normalizedEnsName = normalize(selectedEns.name as string);
 
         set({
           ensNames: names,
           selectedEns,
         });
 
-        if (selectedEns) {
-          await get().setSelectedEns(selectedEns);
+        if (normalizedEnsName) {
+          try {
+            const { chainId } = get();
+            const avatarUrl = await getEnsAvatar(config, {
+              name: normalizedEnsName,
+              chainId,
+            });
+
+            set({ avatar: avatarUrl });
+          } catch (error) {
+            console.error("Failed to fetch ENS avatar", error);
+          }
+        } else {
+          set({ avatar: null });
         }
       } catch (error) {
         console.error("Failed to fetch ENS names", error);

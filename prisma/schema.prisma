@@ -14,34 +14,35 @@ datasource db {
 }
 
 model SubscriptionPack {
-  id           String    @id @default(cuid())
-  name         String
-  price        Decimal   @db.Decimal(10, 2)
-  duration     Int       // Duration in days
-  maxSubnames  Int       // Maximum number of subnames allowed in this pack
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  subnames     Subname[]
+  id          String    @id @default(cuid())
+  name        String
+  price       Decimal   @db.Decimal(10, 2)
+  duration    Int // Duration in days
+  maxSubnames Int // Maximum number of subnames allowed in this pack
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  subnames    Subname[]
 
   @@map("subscription_packs")
 }
 
 model Subname {
-  id                String           @id @default(cuid())
-  parentName        String          // e.g., "example.eth"
-  label            String          // e.g., "mysubnamelabel"
-  name             String          // e.g., "mysubnamelabel.example.eth"
-  contenthash      String?         // Optional contenthash
-  
+  id          String  @id @default(cuid())
+  parentName  String // e.g., "example.eth"
+  label       String // e.g., "mysubnamelabel"
+  name        String // e.g., "mysubnamelabel.example.eth"
+  contenthash String? // Optional contenthash
+  ensOwner    String? // Optional ENS owner
+
   // Relations
-  subscriptionPack SubscriptionPack @relation(fields: [subscriptionPackId], references: [id])
+  subscriptionPack   SubscriptionPack @relation(fields: [subscriptionPackId], references: [id])
   subscriptionPackId String
-  texts            SubnameText[]
-  addresses        SubnameAddress[]
-  
+  texts              SubnameText[]
+  addresses          SubnameAddress[]
+
   // Timestamps
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([parentName, label])
   @@index([name])
@@ -49,14 +50,14 @@ model Subname {
 }
 
 model SubnameText {
-  id        String   @id @default(cuid())
-  key       String   // e.g., "avatar"
-  value     String   // e.g., "https://my-avatar-url"
-  
+  id    String @id @default(cuid())
+  key   String // e.g., "avatar"
+  value String // e.g., "https://my-avatar-url"
+
   // Relations
-  subname   Subname  @relation(fields: [subnameId], references: [id])
+  subname   Subname @relation(fields: [subnameId], references: [id])
   subnameId String
-  
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -66,14 +67,14 @@ model SubnameText {
 }
 
 model SubnameAddress {
-  id        String   @id @default(cuid())
-  coin      Int      // e.g., 60 for ETH
-  value     String   // The address value
-  
+  id    String @id @default(cuid())
+  coin  Int // e.g., 60 for ETH
+  value String // The address value
+
   // Relations
-  subname   Subname  @relation(fields: [subnameId], references: [id])
+  subname   Subname @relation(fields: [subnameId], references: [id])
   subnameId String
-  
+
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -83,14 +84,14 @@ model SubnameAddress {
 }
 
 model ApiToken {
-  id            String      @id @default(cuid())
-  name          String
-  apiKeyDigest  String      @unique
-  ensOwner      String
-  expiresAt     DateTime?
-  isRevoked     Boolean     @default(false)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id           String    @id @default(cuid())
+  name         String
+  apiKeyDigest String    @unique
+  ensOwner     String
+  expiresAt    DateTime?
+  isRevoked    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([ensOwner])
 }

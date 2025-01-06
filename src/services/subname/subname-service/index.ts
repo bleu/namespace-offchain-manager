@@ -38,12 +38,15 @@ export class SubnameService {
   }
 
   async createSubname(data: CreateSubnameDTO): Promise<SubnameResponseDTO> {
-    const validatedData = await this.validateCreateSubname(data);
+    const validatedData = await this.validateCreateSubname({
+      ...data,
+    });
 
     const existingSubname = await prisma.subname.findFirst({
       where: {
         parentName: validatedData.parentName,
         label: validatedData.label,
+        ensOwner: validatedData.ensOwner,
       },
     });
 
@@ -58,6 +61,7 @@ export class SubnameService {
         name: `${validatedData.label}.${validatedData.parentName}`,
         contenthash: validatedData.contenthash ?? null,
         subscriptionPackId: data.subscriptionPackId,
+        ensOwner: validatedData.ensOwner,
         texts: {
           create: validatedData.texts,
         },
@@ -76,7 +80,7 @@ export class SubnameService {
   async getAllSubnames(
     page = 1,
     pageSize = 10,
-    parentNames?: string[],
+    parentNames?: string[]
   ): Promise<PaginatedResponse<SubnameResponseDTO>> {
     if (!parentNames?.length) {
       return {
@@ -147,13 +151,32 @@ export class SubnameService {
     return subname;
   }
 
+  async getSubnameFromOnwer(
+    id: string,
+    ensOwner: string
+  ): Promise<SubnameResponseDTO | null> {
+    const subname = await prisma.subname.findUnique({
+      where: { id, ensOwner },
+      include: {
+        texts: true,
+        addresses: true,
+        subscriptionPack: true,
+      },
+    });
+
+    if (!subname) return null;
+
+    return subname;
+  }
+
   async updateSubname(
     id: string,
     data: UpdateSubnameDTO,
+    ensOwner: string
   ): Promise<SubnameResponseDTO> {
     const validatedData = await this.validateUpdateSubname(data);
 
-    const existingSubname = await this.getSubname(id);
+    const existingSubname = await this.getSubnameFromOnwer(id, ensOwner);
     if (!existingSubname) {
       throw new Error("Subname not found");
     }
@@ -195,9 +218,9 @@ export class SubnameService {
     return subname;
   }
 
-  async deleteSubname(id: string): Promise<void> {
+  async deleteSubname(id: string, ensOwner: string): Promise<void> {
     try {
-      const existingSubname = await this.getSubname(id);
+      const existingSubname = await this.getSubnameFromOnwer(id, ensOwner);
       if (!existingSubname) {
         throw new Error("Subname not found");
       }

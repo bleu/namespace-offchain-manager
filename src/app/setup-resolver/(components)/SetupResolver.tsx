@@ -8,6 +8,15 @@ import { cn } from "@/lib/utils";
 import { AlertTriangle, Check } from "lucide-react";
 import type { SetupResolverProps } from "../types";
 import { TransactionDialog } from "./TransactionDialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectItem,
+  SelectContent,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select";
 
 const SetupResolver: React.FC<SetupResolverProps> = ({
   error,
@@ -22,6 +31,8 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
   isTransactionPending,
   isDialogOpen,
   isConnected,
+  ensNames,
+  setSelectedEns,
   handleCloseDialog,
   handleOpenDialog,
   handleConfirmUpdate,
@@ -61,12 +72,26 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
           </div>
 
           <div className="space-y-4">
-            <CopyableField
-              label="Name"
-              value={selectedEns?.name || ""}
-              helpText="You can change the current ens by selecting it on top right header"
-            />
-
+            <Select
+              onValueChange={(value) =>
+                setSelectedEns(ensNames?.find((ens) => ens.name === value))
+              }
+              defaultValue={selectedEns?.name as string}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select an ENS Name" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>ENS Names</SelectLabel>
+                  {ensNames?.map((name) => (
+                    <SelectItem key={name.name} value={name.name as string}>
+                      {name.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             <CopyableField
               label="Current Resolver"
               value={currentResolver || ""}
@@ -95,7 +120,7 @@ const SetupResolver: React.FC<SetupResolverProps> = ({
                 setupComplete
                   ? "bg-success text-success-foreground hover:bg-success/90"
                   : "bg-primary text-primary-foreground hover:bg-primary/90",
-                "w-full",
+                "w-full"
               )}
               disabled={isLoading || setupComplete || isConfirming}
             >

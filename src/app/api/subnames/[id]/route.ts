@@ -6,7 +6,7 @@ import { ZodError } from "zod";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
@@ -28,7 +28,7 @@ export async function GET(
     console.error("Error fetching subname:", error);
     return NextResponse.json(
       { error: "Error fetching subname" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
@@ -45,23 +45,27 @@ export const PUT = withAuth(
         return NextResponse.json({ error: "ID is required" }, { status: 400 });
       }
 
-      const subname = await subnameService.updateSubname(id, body);
+      const subname = await subnameService.updateSubname(
+        id,
+        body,
+        request.headers.get("ensOwner") as string
+      );
 
       return NextResponse.json(subname, { status: 200 });
     } catch (error) {
       if (error instanceof ZodError) {
         return NextResponse.json(
           { error: "Validation error", details: error.errors },
-          { status: 400 },
+          { status: 400 }
         );
       }
       console.error("Error updating subname:", error);
       return NextResponse.json(
         { error: "Error updating subname" },
-        { status: 500 },
+        { status: 500 }
       );
     }
-  },
+  }
 );
 
 export const DELETE = withAuth(
@@ -74,7 +78,10 @@ export const DELETE = withAuth(
         return NextResponse.json({ error: "ID is required" }, { status: 400 });
       }
 
-      await subnameService.deleteSubname(id);
+      await subnameService.deleteSubname(
+        id,
+        request.headers.get("ensOwner") as string
+      );
 
       return new NextResponse(null, { status: 204 });
     } catch (error) {
@@ -85,8 +92,8 @@ export const DELETE = withAuth(
       console.error("Error deleting subname:", error);
       return NextResponse.json(
         { error: "Error deleting subname" },
-        { status: 500 },
+        { status: 500 }
       );
     }
-  },
+  }
 );

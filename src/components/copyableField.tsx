@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { Copy } from "lucide-react";
 import { Button } from "./ui/button";
@@ -19,7 +21,7 @@ export const CopyableField = ({
   const { toast } = useToast();
 
   const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
+    navigator?.clipboard?.writeText(text);
     toast({ title: "Success", description: "Copied to clipboard" });
   };
 
@@ -33,7 +35,7 @@ export const CopyableField = ({
           <div
             className={cn(
               className,
-              "bg-muted p-3 rounded-lg font-mono text-sm break-all",
+              "bg-muted p-3 rounded-lg font-mono text-sm break-all"
             )}
           >
             {value}

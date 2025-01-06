@@ -19,6 +19,8 @@ const Page = () => {
     isConfirmed,
     refetchResolver,
     transactionHash,
+    ensNames,
+    setSelectedEns,
   } = useEnsResolverSetup();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { isConnected } = useAccount();
@@ -62,6 +64,8 @@ const Page = () => {
       handleCloseDialog={handleCloseDialog}
       handleConfirmUpdate={handleConfirmUpdate}
       transactionHash={transactionHash}
+      ensNames={ensNames}
+      setSelectedEns={setSelectedEns}
     />
   );
 };

@@ -15,6 +15,8 @@ export interface SetupResolverProps {
   isTransactionPending: boolean;
   isDialogOpen: boolean;
   isConnected: boolean;
+  ensNames: GetNamesForAddressReturnType | null;
+  setSelectedEns: (ens: NameWithRelation) => Promise<void>;
   handleOpenDialog: () => void;
   handleCloseDialog: () => void;
   handleConfirmUpdate: () => void;

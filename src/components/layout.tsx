@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { WagmiProvider } from "wagmi";
 import Header from "./header";
 import { Toaster } from "./ui/toaster";
+import { usePathname } from "next/navigation";
 
 export const queryClient = new QueryClient();
 
@@ -27,6 +28,12 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+
+  if (pathname === "/api-doc") {
+    return children;
+  }
+
   return (
     <Providers>
       <div className="flex flex-col min-h-screen">

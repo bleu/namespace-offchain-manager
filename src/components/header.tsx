@@ -3,15 +3,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -105,14 +96,8 @@ export default function Header() {
   const { isConnected, address, chainId, isConnecting } = useAccount();
   const { isAuthenticated } = useAuth();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const {
-    ensNames,
-    selectedEns,
-    avatar,
-    setAddress,
-    setSelectedEns,
-    fetchEnsNames,
-  } = useEnsStore();
+  const { ensNames, selectedEns, avatar, setAddress, fetchEnsNames } =
+    useEnsStore();
 
   useEffect(() => {
     if (isConnected && address && chainId) {
@@ -148,30 +133,18 @@ export default function Header() {
                   </div>
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-[200px] p-0">
-                <Command>
-                  <CommandInput placeholder="Search ENS name..." />
-                  <CommandList>
-                    <CommandEmpty>No ENS name found.</CommandEmpty>
-                    <CommandGroup heading="ENS Names">
-                      {ensNames?.map((ens) => (
-                        <CommandItem
-                          key={ens.id}
-                          onSelect={() => {
-                            setSelectedEns(ens);
-                            setPopoverOpen(false);
-                          }}
-                        >
-                          <User className="mr-2 h-4 w-4" />
-                          {ens.name}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                  <CommandSeparator />
+
+              <PopoverContent className="max-w-[200px] pt-2">
+                {!ensNames ||
+                  (!ensNames?.length && (
+                    <div className="text-center py-2 text-muted-foreground">
+                      No ENS names found.
+                    </div>
+                  ))}
+                <div>
                   <ChainSwitcher />
-                  <CustomConnectButton className="border-0" />
-                </Command>
+                  <CustomConnectButton className="w-full border-0" />
+                </div>
               </PopoverContent>
             </Popover>
           )}

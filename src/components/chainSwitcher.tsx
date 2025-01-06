@@ -19,6 +19,7 @@ const SUPPORTED_CHAINS = [
   },
   {
     ...sepolia,
+    name: "Sepolia",
     icon: "eth.svg",
   },
 ];
@@ -37,7 +38,7 @@ export function ChainSwitcher() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="flex items-center gap-2 border-none"
+          className="flex items-center gap-2 border-none w-full"
           disabled={isPending}
         >
           {currentChain && (
@@ -59,7 +60,7 @@ export function ChainSwitcher() {
             key={supportedChain.id}
             className={cn(
               "flex items-center gap-2 cursor-pointer",
-              chainId === supportedChain.id && "bg-accent",
+              chainId === supportedChain.id && "bg-accent"
             )}
             disabled={chainId === supportedChain.id || isPending}
             onClick={() => switchChain({ chainId: supportedChain.id })}

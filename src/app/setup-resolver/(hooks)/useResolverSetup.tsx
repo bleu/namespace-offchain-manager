@@ -5,7 +5,7 @@ import {
 } from "@/constants/constants";
 import { useEnsStore } from "@/states/useEnsStore";
 import { useEffect, useMemo, useState } from "react";
-import { namehash } from "viem/ens";
+import { namehash, normalize } from "viem/ens";
 import {
   useAccount,
   useChainId,
@@ -14,11 +14,12 @@ import {
   useWriteContract,
 } from "wagmi";
 import { goerli, mainnet, sepolia } from "wagmi/chains";
+import { config } from "@/lib/wagmi";
 
 export const useEnsResolverSetup = () => {
   const chainId = useChainId();
   const { isConnecting } = useAccount();
-  const { selectedEns } = useEnsStore();
+  const { selectedEns, ensNames, setSelectedEns } = useEnsStore();
   const [error, setError] = useState("");
 
   const {
@@ -26,7 +27,9 @@ export const useEnsResolverSetup = () => {
     refetch: refetchResolver,
     isLoading: isCurrentResolverLoading,
   } = useEnsResolver({
-    name: selectedEns?.name || undefined,
+    chainId,
+    name: normalize(selectedEns?.name || ""),
+    config,
   });
 
   const {
@@ -68,7 +71,7 @@ export const useEnsResolverSetup = () => {
       chainId !== sepolia.id
     ) {
       setError(
-        "Unsupported chain, please connected to mainnet, goerli or sepolia",
+        "Unsupported chain, please connected to mainnet, goerli or sepolia"
       );
       return;
     }
@@ -84,7 +87,7 @@ export const useEnsResolverSetup = () => {
     } catch (error) {
       console.error("Error setting resolver:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to set resolver",
+        error instanceof Error ? error.message : "Failed to set resolver"
       );
     }
   };
@@ -98,6 +101,8 @@ export const useEnsResolverSetup = () => {
   }, [selectedEns, reset]);
 
   return {
+    ensNames,
+    setSelectedEns,
     chainId,
     error,
     selectedEns,
