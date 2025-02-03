@@ -1,7 +1,7 @@
-import { ApiKeyEmailTemplate } from "@/components/email/api-key";
 import { withAuth } from "@/lib/withAuth";
 import { Resend } from "resend";
 import { type NextRequest, NextResponse } from "next/server";
+import { ApiKeyEmailTemplate } from "@/emails/api-key";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
