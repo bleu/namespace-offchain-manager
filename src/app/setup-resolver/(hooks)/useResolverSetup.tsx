@@ -71,7 +71,7 @@ export const useEnsResolverSetup = () => {
       chainId !== sepolia.id
     ) {
       setError(
-        "Unsupported chain, please connected to mainnet, goerli or sepolia",
+        "Unsupported chain, please connected to mainnet, goerli or sepolia"
       );
       return;
     }
@@ -87,7 +87,7 @@ export const useEnsResolverSetup = () => {
     } catch (error) {
       console.error("Error setting resolver:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to set resolver",
+        error instanceof Error ? error.message : "Failed to set resolver"
       );
     }
   };

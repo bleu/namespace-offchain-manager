@@ -24,7 +24,28 @@ docker-compose up -d
 npx prisma migrate dev
 ```
 
-### 2. Run the development server
+### 2. Configure Resend API Key
+
+To send emails using Resend, you need to obtain an API key from Resend and set the following environment variables in your .env file:
+
+1. Go to the Resend website and sign up for an account.
+2. Navigate to the API section and generate a new API key.
+3. Copy the generated API key.
+4. Add the following environment variables to your .env file:
+
+```bash
+NEXT_PUBLIC_APP_URL="http://localhost:3000" # app url
+RESEND_API_KEY="your-resend-api-key"
+RESEND_FROM_EMAIL="Namespace <example@example.com>"
+```
+
+Replace your-resend-api-key with the API key you copied from the Resend website.
+
+#### API Documentation
+
+Visit `/api-doc` for the API documentation. This endpoint provides detailed information on how to interact with the available APIs. ```
+
+### 3. Run the development server
 
 ```bash
 yarn dev

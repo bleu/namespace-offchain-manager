@@ -27,4 +27,11 @@ export const apiKeyClient = {
       method: "DELETE",
     });
   },
+
+  sendApiKeyToEmail: async (to: string, apiKey: string): Promise<void> => {
+    return apiClient("/api/email/apikey", {
+      method: "POST",
+      body: JSON.stringify({ to, apiKey }),
+    });
+  },
 };
