@@ -10,6 +10,7 @@ import type { CreateKeyDialogProps } from "../types";
 import { ApiKeyDialogContent } from "./ApiKeyDialogContent";
 import { ApiKeyFooter } from "./ApiKeyFooter";
 import { NewApiKeyDialogContent } from "./NewApiKeyDialogContent";
+import { useApiKeys } from "@/hooks/useApiKeys";
 
 export function CreateKeyDialog({
   isOpen,
@@ -19,6 +20,7 @@ export function CreateKeyDialog({
 }: CreateKeyDialogProps) {
   const [newKeyName, setNewKeyName] = useState("");
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
+  const { sendApiKeyToEmail } = useApiKeys();
 
   const handleSubmit = async () => {
     if (!newKeyName.trim()) return;
@@ -35,6 +37,12 @@ export function CreateKeyDialog({
     setNewKeyName("");
   };
 
+  const handleSendEmail = async (email: string) => {
+    if (!newApiKey) return;
+
+    await sendApiKeyToEmail(email, newApiKey);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -49,7 +57,8 @@ export function CreateKeyDialog({
         {newApiKey ? (
           <NewApiKeyDialogContent
             newApiKey={newApiKey}
-            handleDone={handleDone}
+            handleDoneAction={handleDone}
+            handleSendEmailAction={handleSendEmail}
           />
         ) : (
           <>

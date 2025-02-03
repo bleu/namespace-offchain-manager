@@ -10,8 +10,8 @@ import {
 import { useAuth } from "@/hooks/useAuth";
 import { cn, truncateAddress } from "@/lib/utils";
 import { useEnsStore } from "@/states/useEnsStore";
-import { ConnectKitButton, useSIWE } from "connectkit";
-import { User } from "lucide-react";
+import { ConnectKitButton } from "connectkit";
+import { ChevronDown, Grid, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -73,6 +73,7 @@ export const CustomConnectButton = ({ className }: { className?: string }) => {
 
 const Navigation = () => {
   const pathname = usePathname();
+  const { ensNames } = useEnsStore();
 
   return (
     <nav className="flex items-center space-x-4">
@@ -82,7 +83,7 @@ const Navigation = () => {
           href={href}
           className={cn(
             "text-foreground hover:text-primary transition-colors",
-            pathname === href ? "border-b-2" : "border-0",
+            pathname === href ? "border-b-2" : "border-0"
           )}
         >
           {text}
@@ -92,12 +93,42 @@ const Navigation = () => {
   );
 };
 
+const UserEnsNames = () => {
+  const { ensNames } = useEnsStore();
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          className="flex items-center gap-2 text-muted-foreground hover:text-primary"
+        >
+          <Grid className="size-5" />
+          <span>My Names</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-48">
+        {ensNames && ensNames.length > 0 ? (
+          <ul className="space-y-2">
+            {ensNames.map((ensName) => (
+              <li key={ensName.id} className="text-sm text-muted-foreground">
+                {ensName.name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">No ENS names found.</p>
+        )}
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export default function Header() {
   const { isConnected, address, chainId, isConnecting } = useAccount();
   const { isAuthenticated } = useAuth();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const { ensNames, selectedEns, avatar, setAddress, fetchEnsNames } =
-    useEnsStore();
+  const { selectedEns, avatar, setAddress, fetchEnsNames } = useEnsStore();
 
   useEffect(() => {
     if (isConnected && address && chainId) {
@@ -105,11 +136,13 @@ export default function Header() {
       fetchEnsNames();
     }
   }, [isConnected, address, chainId, setAddress, fetchEnsNames]);
+
   return (
     <header className="bg-background border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         <Navigation />
         <div className="flex items-center space-x-4">
+          {isConnected && <UserEnsNames />}
           {isConnected && (
             <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
               <PopoverTrigger asChild>
@@ -135,12 +168,6 @@ export default function Header() {
               </PopoverTrigger>
 
               <PopoverContent className="max-w-[200px] pt-2">
-                {!ensNames ||
-                  (!ensNames?.length && (
-                    <div className="text-center py-2 text-muted-foreground">
-                      No ENS names found.
-                    </div>
-                  ))}
                 <div>
                   <ChainSwitcher />
                   <CustomConnectButton className="w-full border-0" />

@@ -30,7 +30,7 @@ export function useApiKeys(initialPage = 1, initialPageSize = 10) {
     {
       revalidateOnFocus: false,
       dedupingInterval: 2000,
-    },
+    }
   );
 
   const createApiKey = async (name: string): Promise<ApiKeyResponse | null> => {
@@ -76,6 +76,16 @@ export function useApiKeys(initialPage = 1, initialPageSize = 10) {
     }
   };
 
+  const sendApiKeyToEmail = async (email: string, apiKey: string) => {
+    try {
+      await apiKeyClient.sendApiKeyToEmail(email, apiKey);
+      toast(TOAST_MESSAGES.success.sendApiKeyToEmail);
+    } catch (error) {
+      toast(TOAST_MESSAGES.error.sendApiKeyToEmail);
+      throw error;
+    }
+  };
+
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
   };
@@ -96,6 +106,7 @@ export function useApiKeys(initialPage = 1, initialPageSize = 10) {
     createApiKey,
     revokeApiKey,
     deleteApiKey,
+    sendApiKeyToEmail,
     handlePageChange,
     handlePageSizeChange,
   };

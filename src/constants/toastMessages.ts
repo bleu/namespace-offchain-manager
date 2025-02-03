@@ -1,3 +1,5 @@
+import { send } from "process";
+
 export type ToastType = "error" | "success";
 
 export type ActionType =
@@ -39,6 +41,10 @@ export const TOAST_MESSAGES = {
       title: "Success",
       description: "API key revoked successfully",
     },
+    sendApiKeyToEmail: {
+      title: "Success",
+      description: "API key sent to email successfully",
+    },
   },
   error: {
     fetch: {
@@ -77,6 +83,10 @@ export const TOAST_MESSAGES = {
       title: "Error",
       description: "Failed to revoke API key",
     },
+    sendApiKeyToEmail: {
+      title: "Error",
+      description: "Failed to send API key to email",
+    },
   },
 } as const;
 
@@ -88,5 +98,5 @@ export type ToastMessage =
   | null
   | ((
       label: string,
-      parentName: string,
+      parentName: string
     ) => { title: string; description: string });
